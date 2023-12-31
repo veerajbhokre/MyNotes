@@ -1,0 +1,108 @@
+**Distributed Systems often needs to measure time**
+
+- Schedulers, timeouts, failure detectors, retry timers
+- Performance measurements, statistics, profiling
+- Log files & databases: record when an event occurred
+- Data with time-limited validity (e.g. cache entries)
+- Determining order of events across several nodes
+
+**We distinguish two types of clock: **
+
+- Physical clock
+- Logical clock
+
+# Physical clocks
+
+**Quartz clocks**
+
+- Physical clocks measure the time in seconds.
+- They include analogue/mechanical clocks based on pendulums or similar mechanisms,
+ and digital clocks based e.g. on a vibrating quartz crystal.
+- Quartz clocks are found in most wristwatches, in every computer and mobile phone
+- Quartz clocks are cheap, but they are not totally accurate. 
+- Moreover, the oscillation frequency varies with the temperature.
+- The rate by which a clock runs fast or slow is called drift.
+
+**Atomic clocks**
+
+- When greater accuracy is required, atomic clocks are used. 
+- These clocks are based on quantummechanical properties of certain atoms, such as caesium or rubidium.
+- In fact, the time unit of one second
+in the International System of Units (SI) is defined to be exactly 9,192,631,770 periods of a particular
+resonant frequency of the caesium-133 atom.
+
+
+**GPS Time **
+
+- Another high-accuracy method of obtaining the time is to rely on the GPS satellite positioning system
+- By connecting a GPS receiver to a computer, it is possible to obtain a clock
+that is accurate to within a fraction of a microsecond,
+- provided that the receiver is able to get a clear
+signal from the satellites
+-  In a datacenter, there is generally too much electromagnetic interference to get
+a good signal, so a GPS receiver requires an antenna on the roof of the datacenter building.
+- The system of time measurement based on atomic clocks (International Atomic Time, TAI)
+
+**UTC**
+
+- One rotation of planet Earth around its own axis does not take exactly 24×60×60×9,192,631,770 periods
+of caesium-133’s resonant frequency
+- In fact, the speed of rotation of the planet is not even constant:
+it fluctuates due to the effects of tides, earthquakes, glacier melting, and some unexplained factors.
+- We now have a problem: we have two different definitions of time – one based on quantum mechanics, the
+other based on astronomy – and those two definitions don’t match up precisely.
+- The solution is **Coordinated Universal Time (UTC)**
+- UTC is based on atomic time, but includes
+corrections to account for variations in the Earth’s rotation.
+-  In everyday life we use our local time zone, which is specified as an offset to UTC.
+- The UK’s local time zone is called Greenwich Mean Time (GMT) in winter, and British Summer Time
+(BST) in summer, where GMT is defined to be equal to UTC, and BST is defined to be UTC + 1 hour.
+- Today, the term UT1 is used to refer to mean solar time at 0° longitude.
+- **The difference between UTC and TAI is that UTC includes leap seconds, which are added as needed
+to keep UTC roughly in sync with the rotation of the Earth.**
+
+**Timestramps**
+
+- In the UTC timescale, a day can be 86,399 seconds, 86,400 seconds, or 86,401 seconds long due
+to a leap second.
+- This complicates software that needs to work with dates and times.
+- In computing, a timestamp is a representation of a particular point in time.
+- Two representations
+of timestamps are commonly used: **Unix time and ISO 8601 **
+
+-  ISO 8601: year, month, day, hour, minute, second, and
+timezone offset relative to UTC
+example: 2021-11-09T09:50:17+00:00
+
+-Unix Time 
+    * For Unix time, zero corresponds to the
+arbitrarily chosen date of 1 January 1970, known as the epoch.
+    * There are minor variations: for example,
+Java’s System.currentTimeMillis() is like Unix time, but uses milliseconds rather than seconds.
+    * To be correct, software that works with timestamps needs to know about leap seconds
+    * But For dates that are more than about six months into
+the future, this is impossible to know, because the Earth’s rotation has not happened yet!
+    * The most common approach in software is to simply ignore leap seconds, pretend that they don’t
+exist, and hope that the problem somehow goes away.
+    * This approach is taken by Unix timestamps, and
+by the POSIX standard.
+    *  For software that only needs coarse-grained timings (e.g. rounded to the nearest
+day), this is fine, since the difference of a few seconds is not significant.
+    * However, operating systems and distributed systems often do rely on high-resolution timestamps for
+accurate measurements of time, where a difference of one second is very noticeable.
+    * In such settings,
+ignoring leap seconds can be dangerous.
+    * Today, some software handles leap seconds explicitly, while other programs continue to ignore them.
+
+- A pragmatic solution that is widely used today is that when a positive leap second occurs, rather than
+inserting it between 23:59:59 and 00:00:00, the extra second is spread out over several hours before and
+after that time by deliberately slowing down the clocks during that time (or speeding up in the case of a
+negative leap second). 
+- This approach is called smearing the leap second, and it is not without problems.
+
+
+
+
+
+
+
