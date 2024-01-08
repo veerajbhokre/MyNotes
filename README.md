@@ -4,4 +4,4 @@
 - Recalling them right afterward by creating short summaries
 
 
-1. Lectures on distributed systems by Martin Kleppmann [see](./README.md)
+1. Lectures on distributed systems by Martin Kleppmann [see](/distributed-systems/README.md)
