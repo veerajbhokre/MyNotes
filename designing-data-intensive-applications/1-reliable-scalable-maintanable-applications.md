@@ -224,12 +224,3 @@ Tools and patterns that are helpful for such frequently changing environment: TD
   maintainability.
 
 ---
-
-
-
-
-
-
-
-
-
