@@ -186,3 +186,25 @@ Caching we can do at different levels
 - static data cache at reverse proxy
 - Session cache
 - object cache
+
+## Measure Performance metrics
+
+There are many metrics but beow are the 4 most important metrics.
+
+- Latency (Average and tail latency)
+- Throughput (Must be greater than expected users)
+- Errors
+- Resource Saturation (Tells how much capacity is utilized)
+
+Tail Latency
+
+- We have discussed that if we have enough capacity and if we control the latency we will get the desired throughput
+- Latency can be controlled if we concentrate on tail latency
+- Tail latency refers to the latency or response time of the slowest or outlier requests in a system.
+- In other words, it represents the worst-case scenario in terms of response time that a user might experience when
+  interacting with a service or system.
+- Even if the majority of requests are processed quickly, a few slow requests can significantly impact user perception
+  and overall system reliability.
+- Engineers focus on analyzing the tail of the latency distribution curve, particularly the percentile values such as
+  95th, 99th, or 99.9th percentile.
+- This means 99% of request will have good latency but 1% of request can have latency more than expected. 
