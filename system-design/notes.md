@@ -43,7 +43,7 @@ We will only estimate media storage here. • Average tweet size:
 ## Rate limiter
 
 // key can be IP address or userId
-
+```shell
 throttled(key) {
 
 interval = 60 throttledLimit = 10 currentTime = $(data+%s)
@@ -55,6 +55,11 @@ redis-cli ZADD key currentTime currentTime
 count = redis-cli ZCARD key
 
 if(count > throttledLimit)
-return false else return true }
+    return false 
+  else 
+    return true
+}
+
+```
 
 
