@@ -43,6 +43,7 @@ We will only estimate media storage here. • Average tweet size:
 ## Rate limiter
 
 // key can be IP address or userId
+
 ```shell
 throttled(key) {
 
@@ -62,4 +63,29 @@ if(count > throttledLimit)
 
 ```
 
+## Unique ID generator
 
+UUID - 128 bits and alpha numeric and not sortable
+
+DB ID generator -> Not ideal
+
+Timestramp is 64 bits , we can reduce it to 41 bits Datacenter 5 bits Node 5 bits Sequence number 12 bits -> reset every
+millisec
+
+Timestramp + DatacenterID + Node + Seq number
+
+Talk on clock sync issues and NTP server
+
+SCalability and HA Monitoring and auto scaling
+
+## URL shortner
+
+Make storage capacity. Which will help to idenfy the size of hash value for tiny url
+
+hash fuction will have 0-9, a-z, A-Z that is 64 possible caracter. So total combination possible is 64^N
+
+To calculate length (N) of hash. if we take 7 then it will be close to 3.5 trillion combination.
+
+For hashing use cyclic redundancy check (CRC 32 hash function), it is short hasing and will generate 8 caracter long.
+
+We want 7 , so reduce one and , if it collide then add a random caracter and again perform CRC32.
