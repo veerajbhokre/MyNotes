@@ -300,3 +300,282 @@ Analysis E-Commerce Domain - Verbs:
 
 ---
 
+# Communications
+
+Main Reasons of Why should use API Gateway:
+
+- Client Can't Manage Communications
+  - The client applications can try to handle multiple calls to microservice endpoints, not manageable when it comes to
+    communicates with different protocols like http, GraphQL, gRPC and WebSocket.
+- Complex Client Code
+  - Cause to lots of requests to the backend services, create possible chatty communications. Increases latency and
+    complexity on the UI side. Becomes complex client code.
+- Strong Coupling
+- Cross-cutting Concerns
+  - Authentication, Authorization, Rate Limiting, SSL certifications, Logging, Monitoring, Load Balancing and Circuit
+    Breaker. Implementing all these cross- cutting concerns for every microservice is not a good solution.
+- Protocol Exchanges
+  - Communication required to use different protocols like exposing HTTP Rest API but continue to gRPC for internal
+    communications or exposing WebSocket protocol. Requests must be translate to the other protocols afterwards
+- Async Communication Requirements
+  - Client application can't use async communication due to not supported AMQP protocols. Microservices uses async
+    communication in order to decouple communication as soon as possible. Hard to implement event-driven publish-
+    subscribe model.
+- Payload Changes for Different Clients
+  - Web, Mobile and other client applications might be required different payloads when communicating with internal
+    services. It requires to optimize data responses from services tailored with client applications.
+
+API Gateway Patterns:
+
+- Use API Gateways between client and internal microservices and it is a single point of entry to the client
+  applications.
+- API Gateway sits between the client and multiple backend services and manage routing to internal microservices.
+- API Gateways can handle that Cross-cutting concerns like authentication, authorization, protocol translations, Rate
+  Limiting, Logging, Monitoring, Load Balancing.
+- API Gateway Patterns:
+  - Gateway Routing pattern
+  - Gateway Aggregation pattern
+  - Gateway Offloading pattern
+
+Gateway Routing pattern:
+
+- Route requests to multiple microservices with exposing a single endpoint.
+- Useful when expose multiple services on a single endpoint and route them to internal backend microservices based on
+  the request.
+- The client needs to consume several microservices, Gateway Routing pattern offers to create a new endpoint that handle
+  the request and route this request for each service.
+- E-commerce application might provide services such as search Customers, Shopping cart, discount, and order history.
+- If one of microservices are changed, the Client doesn't know anything and not need to change any code on client side,
+  the only changes will be configuration routing changes.
+- It abstracts your backend microservices from the client applications, with allowing to keep client codes simple, even
+  backend services are changed on behind the API Gateway.
+- Deploy microservices APIs with blue/green or canary deployments with multiple API versions of same microservices, you
+  can gradually shift your request to new API with using the Gateway Routing Pattern.
+- Gateway Routing Pattern gives you the flexibility to use different API versions routing to the requests.
+- If new version of API has got exceptions, it can be quickly reverted back by making only a configuration change.
+- Use Application Layer 7 routing to route the request to the internal services.
+
+Gateway Aggregation Pattern:
+
+- API Gateway service that provide to aggregate multiple individual requests towards to internal microservices with
+  exposing a single request to the client.
+- Use if client application have to invoke several different backend microservices to perform its logic.
+- Client applications need to make multiple calls to different backend microservices, this leads to chattiness
+  communications and impact the performance.
+- If new service added into use cases, then client need to send additional request that increase the network calls and
+  latency.
+- To abstract complex internal backend service communication from the client applications.
+- Dispatches requests to the several backend services, then aggregates the results and sends them back to the requesting
+  client.
+
+![img.png](pics/wetey.png)
+
+Gateway Offloading Pattern:
+
+- Gateway Offloading Pattern offers to combine commonly used shared functionalities into a gateway proxy services.
+- Shared functionalities can application development by moving shared service functionality into centralized places.
+- Authentication, Authorization, Rate Limiting, SSL certifications, Logging, Monitoring, Load Balancing.
+- Implementing cross-cutting concerns for every microservice is not a good solution.
+- Gateway Offloading Pattern offers to manage all those Cross-cutting Concerns into API Gateways.
+- Simplify the development of microservices by removing the cross-cutting concerns on services to maintain supporting
+  resources, allow to focus on the application functionality.
+
+API Gateway Pattern - Summarized:
+
+- API gateway locate between the client apps and the internal microservices.
+- Working as a reverse proxy and routing requests from clients to backend services and provide cross-cutting concerns
+  like authentication, SSL termination, and cache.
+- Several client applications connect to single API Gateway possible to single-point-of-failure risk.
+- If these client applications increase, or adding more logic to business complexity in API Gateway, it would be anti-
+  pattern.
+- Best practices is splitting the API Gateway in multiple services or multiple smaller API Gateways: BFF-Backend-
+  for-Frontend Pattern.
+- Should segregated based on business boundaries of the client applications.
+
+Main Features of API Gateway Pattern:
+
+- **Reverse Proxy and Gateway Routing** Reverse proxy to redirect requests to the endpoints of the internal
+  microservices. Using Layer 7 routing for HTTP requests for redirections. Decouple client applications from the
+  internal microservices. Separating responsibilities on network layer and abstracting internal operations.
+- **Requests Aggregation and Gateway Aggregation** Aggregate multiple internal microservices into a single client
+  request. Client application sends a single request to the API Gateway and it dispatches several requests to the
+  internal microservices and then aggregates the results and sends back to the client application in 1 single response.
+  Reduce chattiness communication.
+- **Cross-cutting Concerns and Gateway Offloading** Best practice to implement cross-cutting functionality on the API
+  Gateways. Cross-cutting functionalities can be; Authentication and authorization, Service discovery, Response caching,
+  Retry policies, Circuit Breaker, Rate limiting and throttling, Load balancing, Logging, tracing, IP allowlisting.
+
+Backends for Frontends Pattern - BFF:
+
+- Backends for Frontends pattern basically separate API Gateways as per the specific frontend applications.
+- Single API Gateway makes a single-point-of failure.
+- BFF offers to create several API Gateways and grouping the client applications according to their boundaries.
+- A single and complex API Gateway can be risky and becoming a bottleneck into your architecture.
+- Larger systems often expose multiple API Gateways by grouping client type like mobile, web and desktop functionality.
+- Create several API Gateways as per user interfaces to provide to best match the needs of the frontend environment.
+- BFF Pattern is to provide client applications has a focused interfaces that connects with the internal microservices.
+
+# Service-to-Service Communications between Backend Internal Microservices:
+
+- Created API Gateways and separate this API Gateways following the BFF Pattern.
+- Sync request comes from the clients and goes to internal microservices over the API Gateways.
+- What if the client requests are required to visit more than one internal microservices ? How we can manage internal
+  microservice communications ?
+- Best practice is reducing inter-service communication as much as possible.
+- In some cases, we can't reduce these internal communications due to operation need to visit several internal services.
+- Client send query request to internal microservices to accumulate some data in the sceen page of frontend.
+- User addItem into shopping cart, these operation need to get data from Product and Price microservices.
+- Synchronous communcation over the API Gateways which is the Request/Response Messaging.
+- The client send http request to the microservices for querying or adding item into Shopping Cart:
+  - 1- The client send request to API Gateway
+  - 2- API Gateway dispatch request to ShoppingCart
+  - 3- SC need to extend information by sending sync request to Product and Pricing microservices
+- Internal calls makes coupling each microservices.
+- If one of the microservices is down, it can't return data to the client so its not any fault-tolerance.
+- If service calls are much then a few HTTP calls to multiple microservices, than it goes to un-manageable situation.
+- Place Order Use Case: client checkout shopping cart, start order fulfillment processes.
+- Request/Response Sync Messaging end up with 6 sync chain HTTP Request.
+- Increase latency and negatively impact the performance, scalability, and availability.
+- What if the step 5 or 6 is failed ?
+- We can apply 2 way to solve this issues:
+  - 1- **Change microservices communications to async way**
+  - 2- **Use Service Aggregator Pattern to aggregate some query operations in 1 API Gateway.**
+
+![img.png](pics/sdf.png)
+
+**Service Aggregator Pattern:**
+
+- Service Aggregator Pattern is receives a request from the client or API Gateway.
+- Dispatches requests of multiple internal backend microservices.
+- Combines the results and responds back to the initiating request in 1 response structure.
+- Reduces chattiness and communication overhead between the client and microservices
+- AddItem aggregates request data from to several back-end microservices: Product - SC and Pricing.
+- Isolates the underlying addItem operation that makes calls to multiple back-end microservices.
+- Centralizing its logic into a specialized microservice.
+
+![img_1.png](pics/ijehrukhshjfsvg.png)
+
+**Service Registry/Discovery Pattern:**
+
+- Microservice Discovery Patterns and Service Registry provide to register and discover microservices in the cluster.
+- Why We Need Service Discovery Pattern ? When deploying and scaling microservices, more microservices and instances
+  could be added to the system to provide scalability to the distributed application.
+- Service locations can change frequently, more dynamic configuration is needed for the microservice architecture.
+- IP Addresses and network locations are dynamically assigned and often change due to auto-scaling features.
+- Service Registry and Discovery pattern allows to find the network locations of microservices without injecting or
+  coupling services.
+- To find the network locations of microservices, the service discovery pattern is used in microservices applications.
+- It will provide to register and discover microservices in the cluster.
+- API Gateways for routing the traffic with client and internal microservices. How API Gateways access the internal
+  backend microservices ?
+- Service discovery pattern uses a centralized server for «service registry» to maintain a central view of microservices
+  network locations.
+- Services update their locations in the service registry at fixed intervals. Clients can connect to the service
+  registry and fetch the locations of microservices.
+- There are 2 main service discovery patterns: - Client-side service discovery
+- Server-side service discovery
+
+# Microservices Asynchronous Message- Based Communication
+
+Synchronous communication:
+
+- Synchronous communication is using HTTP or gRPC protocol for returning synchronous response.
+- The client sends a request and waits for a response from the service.
+- The client code block their thread, until the response reach from the server.
+- The synchronous communication protocols can be HTTP or HTTPS.
+- The client sends a request with using http protocols and waits for a response from the service.
+- The client call the server and block client their operations.
+- The client code will continue its task when it receives the HTTP server response.
+
+Asynchronous Communication:
+
+- The client sends a request but it doesn't wait for a response from the service. The client should not have blocked a
+  thread while waiting for a response.
+- AMQP (Advanced Message Queuing Protocol)
+- Using AMQP protocols, the client sends the message with using message broker systems like Kafka and RabbitMQ queue.
+- The message producer does not wait for a response.
+- Message consume from the subscriber systems in async way, and no one waiting for response suddenly.
+- If there is busy interactions in communication across multiple microservices, then use asynchronous messaging
+  platforms.
+- Message brokers are responsible for handling the message sent by the producer service in async messaging-based
+  communication.
+- If the consumer service is down at the moment, the broker might be configured to retry as long as necessary for
+  successful delivery.
+- Messages can be persisted if required or stored only in memory.
+- Message broker is responsible for delivering the message.
+- No longer necessary for both microservices to be up and running for successful communication.
+- Async messaging provides loosely couple communication.
+
+Benefits of Asynchronous Communication:
+
+- New Subscriber Services Adding new services is very simple. We can easily subscribe to message that we want to
+  receive. The producer doesn’t need to be know about subscribers, we can remove and add subscribers without affecting
+  producer service.
+- Scalability With async communications we can easier to manage scalability issues, can scale producer, consumer and
+  message broker system independently. Scale services according to incoming messages into event bus system. Kubernetes
+  KEDA Auto-scalers.
+- Event-driven Microservices With async communication, we can provide event-driven architectures which is best way to
+  communicate between microservices.
+- Retry mechanisms Brokers can retry to sending message and keep trying automatically without any custom solutions.
+
+Challenges of Asynchronous Communication:
+
+- Single Point of Failure - Message Broker The message broker becomes a single point of failure. We should not rely of
+  all communication with a single node of message brokers, instead we should scale it and use hybrid communication with
+  sync and async in your cases.
+- Debugging difficult to debug issues with async communication, it can be hard to trace the flow of a single operation
+  across service boundaries. debugging of the flow and the payload of events takes so many times and hard to debug at
+  the same time.
+- At-least-once delivery and Not Guarantee an order of messages Mostly Brokers use at-least-once delivery and not
+  Guarantee order of messages. Should embrace these message delivery mechanism with applying idempotency consumers and
+  not designing FIFO requires cases.
+
+
+- Use Asynchronous message-based communication when you have multiple microservices are required to interact each other
+  without any dependency.
+- Asynchronous message-based communication is works with events.
+- Events can place the communication between microservices: Event-driven communication.
+- If any changes happens in microservices, it is propagating changes across multiple microservices as an event.
+- Events consumed by subscriber microservices.
+- Event-driven communication bring us Eventual consistency.
+
+2 Type of Asynchronous Messaging Communication:
+
+- Single-receiver Message-based Communication (1-1 model/ point to point model)
+- Multi-receiver Message-based Communication (1-Many model/ publish-subscribe model)
+
+Single-receiver Message-based Communication:
+
+- one-to-one (queue) or point-to-point communications.
+- If you send 1 request to the specific consumer, and this operation will take long time, use this Single-receiver async
+  one-to-one communication.
+- Single producer and single receiver; implementation as a Command Pattern.
+
+Multiple-receiver Message-based Communication:
+
+- Publish/subscribe mechanisms that has multiple receivers.
+- Producer service publish a message and it consumes from several microservices by subscribing message on the message
+  broker system.
+- Publisher don't need to know any subscriber, no any dependecy with communication parties.
+- one-to-many (topic) implementation has Multiple receivers. Each request can be processed by zero to multiple
+  receivers.
+- Publish/subscribe used in patterns Event-driven microservices architecture.
+- Message broker system is publishing events between multiple microservices, subscribing these events in an async way.
+- Messages are available to all subscribers and the topic can have more than one subscriber.
+- The message remains persistent in a topic until they are deleted.
+- Kafka, RabbitMQ or Amazon SNS and EventBridge.
+- Event-driven Architecture, CQRS pattern, event storming, eventual consistency principles.
+
+Fan-Out & Message Filtering with Publish/Subscribe Pattern:
+
+- Fan-out is a messaging pattern; ‘fanned out’ to multiple destination in parallel.
+- Each of destinations can work and process this messages in parallel.
+- Publisher/subscriber model to define a topic which is logical access point to enabling message communication with
+  asynchronously.
+- Publisher sends the message to the topic, message is immediately fanned out to all subscribers of this topic.
+- Each service can operate and scale independently and individually that completely decoupled and asnycronously.
+- The publisher and the subscribers don’t need to know who is publishing / consuming this message that is broadcasting.
+- Deliver the same message to multiple receivers is to use the Fanout Publish/Subscribe Messaging Pattern.
+
+![img_2.png](pics/joieruoir.png)
+
