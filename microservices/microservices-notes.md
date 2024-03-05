@@ -782,4 +782,177 @@ Consider business Transactional Boundaries Between Microservices, that data need
 microservices. Prepare for compensating transactions in case of fail.
 
 
+---
+
+# Microservices Data Management - Commands and Queries
+
+Problem:
+
+- Cross-Service Queries with Complex JOIN operations
+- Read and write operations at scale
+- Distributed Transaction Management
+
+Solutions:
+
+- Microservices Data Query Pattern and Best Practices
+- Materialized View Pattern
+- CQRS Design Pattern
+- Event Sourcing Pattern
+
+What is Microservices Cross-Service Queries?
+
+- Monolithic architectures, its very easy to query different entities, Querying data across multiple tables is
+  straightforward.
+- Microservices architectures uses polyglot persistence, has different databases, need strategy to manage queries.
+- What if the client requests are visit more than one internal microservices ?
+- E-commerce application we have product, basket, discount, ordering microservices that needs to interact each other to
+  perform customer use cases.
+- Integrations are querying each services data for aggregation or perform logics.
+
+How can we manage these cross-services queries ?
+
+Assumptions:
+
+- Direct HTTP Communication
+  - Not a good solution that makes coupling each microservices, and loose power of microservices independency.
+- Async Communication
+  - The best practice is reducing inter-service communication as much as possible and use async communication. Can't
+    reduce these internal communications due to customer requirement.
+- Client send query request to internal microservices to accumulate some data.
+- Those query request wait immediate response so we can't proceed with async communication.
+- Transient errors, Network congestion or any overloaded microservice can result in long-running and failed operations.
+- Materialized View Pattern
+  - Reduce inter-service communication and provide sync response.
+
+Before we understand more see below examples of Cross queries:
+
+![img.png](pics/sdghsfgsdfg.png)
+
+Microservices Cross-Service Queries Chain Queries – Get Order with All Details:
+
+![img_1.png](pics/sdfsgdsfhghj.png)
+
+Cross-Service Query Solutions in Microservices:
+
+Weak Solutions:
+
+- Sync Communication: Use Service Aggregator Pattern but it increase coupling and latency.
+- Async Communication: Provide decoupling but query request are waiting immediate response.
+
+Solutions:
+
+- Materialized View Pattern
+- CQRS Design Pattern
+
+### Materialized View Pattern
+
+![img_2.png](pics/gfdhdfgh.png)
+
+- Instead of querying the Product Catalog and Pricing services, SC maintains its own local copy of that data.
+- With Materialized View Pattern, even if the Catalog and Pricing services are down, Shopping Cart can continue.
+- Broke the direct dependency of other microservices and make faster the response time, help efficient querying and
+  improve application performance.
+- Generate pre-populated views of data, more suitable format for querying and provide good query performance.
+- Includes joining tables and combining data entities and calculated columns and execute transforms.
+- Views are disposible and can rebuilt from the source.
+- With appying Materialized View Pattern, we have duplicated data into our system.
+- Duplicating data is not a anti-pattern, have strategically duplicating our data for microservice communications.
+- Only one service can be a data ownership.
+- _How and when the denormalized data will be updated ?_
+  - When the original data changes it should update into sc microservices.
+  - Need to synchronize the read models when the main service of data is updated.
+  - Solve with using asynchronous messaging and publish/subscribe pattern.
+  - Publish an event and consumes from the subscriber service to update its denormalized table.
+  - Using a scheduled task, an external trigger, or a manual action to regenerate the table.
+
+### CQRS (Command Query Responsibility Segregation)
+
+![img_3.png](pics/vchgfdhsdhgdfh.png)
+
+- CQRS design pattern in order to avoid complex queries to get rid of inefficient joins.
+- Separates read and write operations with separating databases.
+- Commands: changing the state of data into application.
+- Queries: handling complex join operations and returning a result and don't change the state of data into application.
+- Large-scaled microservices architectures needs to manage high-volume data requirements.
+- Single database for services can cause bottlenecks.
+- Uses both CQRS and Event Sourcing patterns to improve application performance.
+- CQRS offers to separates read and write data that provide to maximize query performance and scalability.
+
+CQRS – Read and Write Operations:
+
+- Monolithic has single database is both working for complex join queries, and also perform CRUD operations.
+- When application goes more complex, this query and CRUD operations will become un-manageable situation.
+- Application required some query that needs to join more than 10 table, will lock the database due to latency of query
+  computation.
+- Performing CRUD operations need to make complex validations and process long business logics, will cause to lock
+  database operations.
+- Reading and writing database has different approaches, define different strategy.
+- «Separation of concerns» principles: separate reading database and the writing database with 2 database.
+  - Read database uses No-SQL databases with denormalized data.
+  - Write database uses Relational databases with fully normalized and supports strong data consistency.
+- If our application is mostly reading use cases and not writing so much, it is read-incentive application.
+- Read and write operations are asymmetrical and has very different performance and scale requirements.
+- To improve query performance, the read operation perform queries from a highly denormalized materialized views to
+  avoid expensive repetitive table joins and table locks.
+- Write operation which is command operation, can perform commands into separate fully normalized relational database.
+- Supporting ACID transactions and strong data consistency.
+- Commands: task-based operations like "add item into shopping cart" or "checkout order".
+- Commands can be handle with message broker systems that provide to process commands in async way.
+- Queries: never modify the database, always return the JSON data with DTO objects.
+
+CQRS – Synchronization with Read and Write DB:
+
+- Keep sync both read and write databases.
+- Publishes an event that subscribe from Read Database and update the read table accordingly.
+- Synchronization handles with async communication using message brokers.
+- This creates Eventual Consistency principle.
+- The Read database eventually synchronizes from the Write database.
+- Some lag in the process due to async communication with message brokers that applies publish/subscribe pattern.
+- Welcome to Eventual consistency.
+
+Benefits of CQRS:
+
+- Scalability When we separate Read and Write databases, we can also scale these separate databases independently. Read
+  databases follows denormalized data to perform complex join queries.
+- If application is read-incentive application, we can scale read database more then write database.
+- Query Performance The read database includes denormalized data that reduce to comlex and long-running join queries.
+  Complex business logic goes into the write database. Improves application performance for all aspects.
+- Maintability and Flexibility Flexibility of system that is better evolve over time and not affected to update commands
+  and schema changes by separating read and write concerns into different databases.
+- Better implemented if we physically separate the read and write databases.
+
+Drawbacks of CQRS:
+
+- Complexity : CQRS makes your system more complex design. Strategically choose where we use and how we can separate
+  read and write database.
+- Eventual Consistency : The read data may be stay old and not-updated for a particular time. So the client could see
+  old data even write database updated, it will take some time to update read data due to publish/subscribe mechanism.
+- We should embrace the Eventual Consistency when using CQRS, if your application required strong consistency than CQRS
+  is not good to apply.
+
+Best Practices for CQRS:
+
+- Best practices to separate read and write database with 2 database physically.
+- Read-intensive that means reading more than writing, can define custom data schema to optimized for queries.
+- Materialized View Pattern is good example to implement reading databases.
+- Avoid complex joins and mappings with pre-defined fine- grained data for query operations.
+- Use different database for reading and writing database types.
+- Using No-SQL document database for reading and using Relational database for CRUD operations.
+
+How to Sync Read and Write Databases in CQRS ? :
+
+- Event-Driven Architecture, when something update in write database, publish an update event with using message broker
+  systems, consume by the read database and sync data according to latest changes.
+- Creates a consistency issue, the data would not be reflected immediately due to async communication with message
+  brokers.
+- «Eventual Consistency» The read database eventually synchronizes with the write database, and take some time to update
+  read database in the async process.
+- Take read database from replicas of write database. applying Materialized View Pattern can significantly increase
+  query performance.
+- Event Sourcing Pattern is the first pattern we should consider to use with CQRS.
+- CQRS is using with "Event Sourcing Pattern" in Event-Driven Architectures.
+
+![img_4.png](pics/sgsdfgtgrh.png)
+
+
 
