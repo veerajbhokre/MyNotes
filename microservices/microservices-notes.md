@@ -579,3 +579,207 @@ Fan-Out & Message Filtering with Publish/Subscribe Pattern:
 
 ![img_2.png](pics/joieruoir.png)
 
+---
+
+# Microservices Database Management Patterns and Principles
+
+- Managing a microservices database is challenging job, should have a strategy.
+- Challenging to implement queries and transactions that visits to several microservices.
+
+### Microservices Database Management Patterns and principles:
+
+- The Database-per-Service pattern
+- The API Composition pattern
+- The CQRS pattern
+- The Event Sourcing pattern
+- The Saga pattern
+- The Shared Database anti-pattern
+
+**Overview of patterns:**
+
+**1. The Database-per-Service Pattern:**
+
+- In order to be a loose coupling of services, each microservice should have its own private database. Design database
+  architecture for microservices.
+- Microservices should be loosely coupled, scalable, and independent. When shifting to the monolithic architecture to
+  microservices architecture, should decomposes databases.
+- Distributed data model with many smaller databases for particular microservice.
+- Data schema changes can perform without any impact on other microservices, Changes to an individual database don’t
+  impact other services.
+- There isn’t a single point of failure in the application, the application is becomes more resilient.
+- Individual databases are easier to scale, if 1 service peek the requests that only that microservice can scale
+  independently.
+- Separating databases can gives us to ability to pick the best optimized database for our microservices.
+- Can choices include relational, document, key-value, and even graph-based data stores.
+- Using the most efficient database depending on the service requirements and functionality.
+- Drawback:
+  - Services need a communication method to exchange data, inter-service communication.
+  - Each service must provide a clear API, that need to make resilience of these communications like applying retry and
+    circuit breaker patterns.
+  - Distributed transactions across microservices can negatively impact consistency and atomicity.
+  - Complex queries, no simple way to execute join queries on multiple data stores.
+
+**2. The Shared Database Anti-Pattern:**
+
+- You can create a single shared database with each service accessing data using local ACID transactions. But it is
+  against to microservices nature and will cause serious problems in the future of applications.
+- If we don’t follow Database-per-Service pattern and use Shared Database for several microservices = Anti-Pattern
+- It is against to microservices nature and will cause serious problems in the future of applications.
+- When using a shared database, the microservices lose their core properties: scalability, resilience, and independence.
+- You will face to develop big a few monolithic applications instead of microservices.
+- Shared database can block microservices due to single- point-of-failure.
+- If shared database seems to be the best option for the microservices project, should re-think that we really need the
+  microservices, the monolith would be the better choice.
+- Benefits:
+  - Transaction management, that we don't need to span the transactions over the microservices.
+  - Decrease duplicate data. Since data is fully constrained, we can easily execute complicated queries with joins.
+  - Able to follow ACID. Consistency of data and state easily manage when process fails.
+- Drawbacks:
+  - Microservices with shared databases can’t easily scale.
+  - Shared database will become a single point of failure.
+  - Microservices won’t be independent in terms of development and deployment.
+
+The API Composition Pattern:
+
+Retrieving data from several services also need a set of patterns and practices. When implements a query by invoking
+several microservices, we will follow the API Composition, Gateway Aggregation patterns for combining the results.
+
+The CQRS Pattern:
+
+The command query responsibility segregation (CQRS) is provide to seperate commands and queries database in order to
+better perform querying several microservices.
+
+The Event Sourcing Pattern:
+
+The Event Sourcing pattern basically provide to accumulate events and aggregates them into sequence of events in
+databases. We can replay at certain point of events.
+
+The Saga Pattern:
+
+Transaction management in really hard when it comes to microservices architectures. We use Saga Pattern to implementing
+transactions between several microservices and maintaining data consistency.
+
+---
+
+# Database Choises for microservices
+
+### Polyglot Persistence
+
+- Microservices enables using different kinds of data storing technologies.
+- Each development team can choose the persistence technology that suits the needs of their service best.
+- Martin Fowler - Polyglot persistence will come with a cost - but it will come because the benefits are worth it.
+- When relational databases are used inappropriately, they give damaged on application development.
+- Example of looked up page elements by ID, much better suited to a key-value No-SQL databases than relational
+  databases.
+
+## How to Choose a Database for Microservices ?
+
+- Relational Databases - RDBMS
+  - Relational databases provides storing data into related data tables.
+  - Relational database tables have a fixed schema, use SQL to manage data and support transactions with ACID
+    principles.
+  - A table uses columns and rows for storing the actual data. Each table will have a column that must have unique
+    values—known as the primary key.
+  - The main advantages of Relational database is ACID compliance. If one change fails, the whole transaction will fail.
+  - Example of relational databases are Oracle, MS SQL Server, MySQL, PostgreSQL.
+
+- No-SQL Databases (Non-Relational Databases)
+  - No-SQL databases has different types of stored data and data models: Document, Key-value, Graph-based, Column-based
+    databases.
+  - Ease-of-use, scalability, resilience, and availability characteristics.
+  - NoSQL databases stores unstructured data, and this gives huge performance advantage.
+  - NoSQL stored unstructured data in key-value pairs or JSON documents.
+  - No-SQL databases don't provide ACID guarantees.
+  - Drawback is transaction management.
+
+No-SQL Document Databases:
+
+- Document databases stores and query data in JSON-based documents.
+- Data and metadata are stored hierarchically.
+- Objects are mapping to the application code.
+- Don’t have to run JOINs or decompose data across tables.
+- Scalability, document databases can distributed very well.
+- Best choise for content management and storing catalogs.
+- I.e. products data can store in document database for e- commerce applications.
+- Example Document Databases: MongoDB and Cloudant.
+
+No-SQL Key-Value Databases:
+
+- Data is storing as a collection of key-value pairs in Key- value NoSQL database.
+- Data is represented as a group of key-value in the database.
+- Best choise for session-oriented applications.
+- I.e. storing customer basket data into key-value database.
+- Example Key-Value Databases: Redis, Amazon DynamoDB, Azure CosmosDB, Oracle NoSQL Database.
+
+No-SQL Column-Based Databases:
+
+- Column-based databases also known Wide-Column Databases.
+- Data is stored in columns, by this way, it can access necessary data more faster than if we compare to storing data in
+  rows.
+- If you select mostly same columns in your databases, its good to use this databases.
+- It doesn't scanning the unnecessary information in a whole row.
+- Column-based databases can scale by columns independently.
+- Columns could be different database servers.
+- I.e. building a Data warehouse, Big Data processing.
+- Apache Cassandra, Apache HBase or Amazon DynamoDB, Azure CosmosDB.
+
+No-SQL Graph-Based Databases:
+
+- Graph-based databases is stores data in a graph structure into node, edge, and data properties.
+- Data entities are connected in nodes.
+- The main benefit of a graph-based databases is to store and navigate graph relationships.
+- I.e. fraud detection, social networks, and recommendation engines.
+- Example of Graph-based databases are OrientDB, Neo4j, and Amazon Neptune.
+
+When to Use Relational Databases ?
+
+- Read Requirements, Complex Join Queries Relational Database has a fixed schema. When relationships between tables are
+  important and data is highly structured and requires referential integrity.
+- Can work with complex queries, table joins and reports on normalized data models.
+- Relational Database supports a powerful SQL query language.
+- Deployments, Centralized Structure Relational Databases will be deployed to large and one or few locations. Relational
+  database has centralized structure.
+- Relational databases have a single point of failure with failover.
+- Relation database is deployed in vertical fashion.
+
+When to Use No-SQL Databases ?
+
+- Flexible Schema, Dynamic Data NoSQL Database has no fixed schema. Allows to add or remove attributes into their model
+  with dynamically. When your data is dynamic and frequently changes.
+- Use case of implement an IoT platform that stores data from different kinds of sensors with frequently changed the
+  attributes of your data.
+- Un-predictable Data, High Workload Volume When you have high volume workloads and needs to horizontal scale with low
+  latency. NoSQL databases have been designed for the cloud that naturally good for horizontal scaling.
+- NoSQL Databases prioritize partition tolerance that designed for handling large amount of data or data coming in high
+  velocity.
+- Frequently Change Data and Read Requirements When data is dynamic and frequently changes and Relationships are de-
+  normalized data models and Data retrieve operations are simple and performs without table joins.
+- Data Consistency, BASE Model - Basically Available, Soft State, Eventually Consistent NoSQL Database is only
+  eventually consistent and don't support transactions, focus on high volume data and horizontal scaling.
+- Write Performance Requirements NoSQL Database compromise consistency to achieve fast write performance, offers to fast
+  write operations with Eventual consistency.
+- Not Good for Complex Join Queries NoSQL Databases perform best when data is stored in the same format not require to
+  relation and join operations.
+- Deployments, De-centralized Structure NoSQL is scale horizontally so data is replicated across different geographical
+  zones and provides better control over consistency, availability, and performance.
+- NoSQL databases have no single point of failure, has decentralized structure, gives both read and write scalability,
+  deployed in horizontally.
+
+Focus The Data Type That Need to Store , Consider the type of data that you have:
+
+- Store JSON documents in No-SQL Document database.
+- Put transactional data into a Relational SQL database.
+- Use a time series data base for telemetry databases.
+- Choose Blob Data Storage for blob datas.
+- Put application logs into Elastic Search Databases.
+
+Trade-offs between Availability and Consistency:
+Understand the Trade-offs between Availability and Consistency. Should prefer High Availability over strong consistency
+as soon as possible to scale horizontally. (the CAP theorem)
+
+Transactional Boundaries Between Microservices:
+Consider business Transactional Boundaries Between Microservices, that data need to consistent across those
+microservices. Prepare for compensating transactions in case of fail.
+
+
+
