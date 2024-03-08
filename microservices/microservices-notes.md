@@ -1298,4 +1298,94 @@ Why Use Outbox Pattern ?
 
 ![img_6.png](pics/sfxvsdfgrefeg.png)
 
+---
+
+# Event-Driven Microservices Architecture
+
+- Microservices architectures are designed to be highly modular and flexible, that can be scaled and managed separately
+  and use of APIs to communicate between services.
+- Event-driven architecture, microservices can communicate by publishing and subscribing to events, than directly
+  calling each other's APIs.
+- Event-driven microservice architecture is means communicating with microservices via event messages and we can do
+  asynchronous behavior and loosely coupled.
+- Instead of sending request when data needed, services consume them via events.
+- Huge Innovations on the Event-Driven Microservices Architectures;
+- Real-time messaging platforms, stream-processing, event hubs, real-time processing, batch processing, data
+  intelligence.
+
+![img.png](pics/sragsergrsteyerth.png)
+
+- When a service needs to communicate with another service, it publishes an event to a message queue or event bus. Other
+  services can then subscribe to that event and take appropriate action when the event is received.
+
+- _Asynchronous communication :_ Allows services to communicate asynchronously. Service can publish an event and
+  continue processing without waiting for a response from the other service.
+
+- _Decoupled communication :_ Decouples the publisher and subscriber, allows to evolve independently without affecting
+  each other.
+
+- _Real-time processing:_ Support real-time processing, as events are published and consumed as soon as they occur. Need
+  to react to events in real-time, such as in systems that use CDC to track changes to a database.
+
+- _High volume events :_ Well-suited to handling high volume events, as they can scale horizontally by adding more event
+  consumers as needed. Can be scaled independently to handle increased load.
+- _Responsible business capability :_ Each service is responsible for a specific function or business capability.
+- Services communicate with each other by publishing and subscribing to events, that make it easier to build and
+  maintain complex systems.
+- Allows to work on different parts of the system in parallel without having to worry about the impact on other
+  components.
+
+### Real-time Processing and High Volume Events in Event-Driven Microservices Architecture
+
+- Real-time processing Real-time processing is achieved by using a message queue or event bus to publish and consume
+  events as they occur.
+- When an event is generated, it is published to the message queue or event bus and made available to any interested
+  subscribers.
+- Allows you to react to events in real-time, as they are published and consumed as soon as they occur.
+- When need to perform real-time analytics or trigger actions based on changes to the data.
+- High Volume Events Using a message queue or event bus that can handle high volumes of events and distribute them to
+  multiple consumers.
+- When you have a system that generates a large number of events, use a event bus to distribute those events to multiple
+  consumers, that can process events in parallel.
+- Allows you to scale up the number of event consumers as needed to handle increased load.
+- Event-driven microservices architectures to process events in real-time and scale to handle high volumes of events.
+
+### Event Hubs and Event Streaming in Event-Driven Microservices Architecture
+
+An Event Hub is a specific infrastructure component designed for event ingestion and distribution, while an Event Stream
+is a more general concept referring to the flow of events within an event-driven system. Event Streams may flow through
+Event Hubs, but they can also come from other sources or be managed by different systems.
+
+### Use Cases of Event Hubs and Event Streaming
+
+- Use Case – Customer Purchase on E-Commerce E-commerce website that generates a large number of events as customers
+  browse and purchase products.
+- Using event streaming, build a real-time analytics pipeline that processes these events as they occur and generates
+  insights in real-time.
+- This could include tracking customer behavior, identifying trends and patterns, and triggering actions based on
+  changes to the data.
+- Use Case – Data Synchronization Different services may need to access the same data, and not be able to access each
+  other's databases directly.
+- Using event streaming, we can build a data synchronization pipeline that captures changes made to the data and streams
+  them to other services in real-time. Ensures to access the most up-to-date data.
+- Event Hubs and event streaming is a powerful tool for building real-time data pipelines in microservices architectures
+  that provides flexible platform for data ingestion and distribution.
+
+### Traditional Event-Driven Microservices Architecture
+
+![img_1.png](pics/aserfasfsg.png)
+
+### Evolved Event-Driven Microservices Architecture
+
+![img_2.png](pics/sfdgsfgsdfh.png)
+
+### Kafka Event-Driven Microservices Architecture
+
+![img_3.png](pics/srafgsrgsdfg.png)
+
+![img_4.png](pics/asfgasdfsrfgsrdfg.png)
+
+---
+
+# Microservices Distributed Caching
 
