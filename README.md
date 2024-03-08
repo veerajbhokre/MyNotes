@@ -1,7 +1,4 @@
 # MyNotes
 
 - Taking notes on books I read, talks I watch
-- Recalling them right afterward by creating short summaries
-
-
-1. Lectures on distributed systems by Martin Kleppmann [see](/distributed-systems/README.md)
+- Recalling them right afterward by creating the summaries
