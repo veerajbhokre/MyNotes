@@ -1389,3 +1389,140 @@ Event Hubs, but they can also come from other sources or be managed by different
 
 # Microservices Distributed Caching
 
+### What is Caching ?
+
+- Caching for improving the performance of a system by storing frequently accessed data in a cache that can be quickly
+  accessed from memory.
+- Caching is to reduce the number of expensive operations, such as database queries or network requests.
+- Caching can increase performance, scalability, and availability for microservices with reducing latency with cache and
+  makes application faster.
+- When the number of requests are increased, caching provide to handle requests with high availability.
+- If application request mostly comes for reading data that is not changes so frequently, then Caching will be so
+  efficient.
+- I.e. reading product catalog from e-commerce application. Caching also provide to avoid re-calculation processes.
+- By storing frequently accessed data in a cache, system can avoid the overhead of repeatedly expensive operations.
+
+### Types of Caching
+
+Types of Caching
+
+- In-memory cache
+  - Stores data in the main memory of a computer. In-memory caches are typically the fastest type of cache, but the data
+    is lost when the cache is restarted or the machine is shut down.
+- Disk cache
+  - Stores data on a hard drive or solid-state drive. Disk caches are slower than in-memory caches, but they can persist
+    data.
+- Distributed cache
+  - Cache is distributed across multiple machines and is typically used in distributed systems, such as microservices
+    architectures.
+  - Distributed caches can improve the performance and scalability of a system by allowing data to be stored and
+    accessed from multiple locations.
+
+### Distributed Caching in Microservices
+
+- Distributed caching is improving the performance by storing frequently accessed data in a cache that can be quickly
+  accessed from multiple locations.
+- Microservices architectures are typically implement a distributed caching architecture: - Improve the performance of
+  individual services by storing frequently accessed data locally.
+- Reducing the need to make expensive calls to a database or other external system.
+- How can we increase the speed of the microservices ? With using Distributed Cache.
+
+- Microservices are responsible for a specific function and communicates with other services through well-defined
+  interfaces, typically using APIs.
+- By storing frequently accessed data locally in a cache, microservices can avoid the overhead of making repeated calls
+  to an external system, resulting in faster response times.
+- Benefits to using distributed caching in a microservices:
+- Improved performance Services can avoid the overhead of making repeated calls to a database or other external system.
+- Resilience Allowing services to continue functioning even if an external system becomes unavailable.
+- Scalability Allowing services to handle increased traffic without the need to scale up the external system.
+
+### Cache Hit and Cache Miss
+
+- Cache hit occurs when the requested data can be found in the cache.
+- Cache miss occurs when the requested data is not in the cache and must be retrieved from a slower storage db.
+- Cache hits are desirable because they can improve the performance of a system by reducing the number of requests.
+- Cache misses can have a negative impact on performance, because they require additional time and resources to retrieve
+  the requested data.
+- The cache hit rate is a measure of how often a cache is able to fulfill requests from its own store.
+- High cache hit rate indicates that the cache is effective at storing frequently accessed data.
+- Low cache hit rate may indicate that the cache is not large enough.
+
+### Caching Strategies in Distributed Caching
+
+There are several caching strategies that can be used in distributed microservices:
+
+- Cache Aside
+- Read-Through
+- Write-Through
+- Write-Back, Write-Behind
+
+**Cache Aside:**
+
+- Client checking the cache for data before making a request to the backend service. When microservices needs to read
+  data from the database, it checks the cache first to determine whether the data is available.
+- If the data is available (a cache hit), the cached data is returned. If the data isn’t available (a cache miss), the
+  database is queried for the data.
+- The client will retrieve the data from the backend service and store it in the cache for future requests.
+- Data is lazy loaded into cache by client application.
+
+**Read-Through Strategy:**
+
+- When a client requests data that is not found in the cache, the cache will automatically retrieve the data from the
+  underlying database and store it in the cache for future requests.
+- Cache-aside strategy, when a client requests data that is not found in the cache, the client is responsible for
+  retrieving the data from the database.
+- Read-through cache strategy, when a client requests data that is not found in the cache, the cache will automatically
+  retrieve the data from the database.
+
+**Write-Through Strategy:**
+
+- Update the cache whenever data is written to the backend service. Cache always has the most up-to-date data, but it
+  can also result in a higher number of write operations.
+- Instead of lazy-loading the data in the cache after a cache miss, the cache is proactively updated immediately
+  following the primary database update.
+- Data is first written to the cache and then to the database.
+- In Write-Through, the data written to the cache is synchronously updated in the main database.
+
+**Write-Back or Write-Behind:**
+
+- In Write-Back or Write-Behind, the data written to the cache is asynchronously updated in the main database.
+
+### Cache eviction
+
+Cache eviction refers to the process of removing or evicting items from a cache to make room for new data or to manage
+memory usage effectively. Caches have limited capacity, so when the cache is full and new items need to be added, the
+cache must decide which existing items to remove.
+
+There are several common cache eviction policies:
+
+- Least Recently Used (LRU):
+  - This policy removes the least recently accessed items from the cache when the cache is full. It assumes that items
+    that have not been accessed recently are less likely to be accessed in the near future.
+
+- Least Frequently Used (LFU):
+  - This policy removes the least frequently accessed items from the cache when the cache is full. It assumes that items
+    that have been accessed the least number of times are less likely to be accessed again.
+
+- First-In-First-Out (FIFO):
+  - This policy removes the oldest items that were added to the cache when the cache is full. It follows the principle
+    of "first in, first out."
+
+---
+
+# Microservices Deployments
+
+### Deployment Strategies for Microservices
+
+- Blue-green deployment Deploying updates to a new set of microservices (the "green" deployment), while the old version
+  of the microservices (the "blue" deployment) remains running.
+- Rolling deployment Deploying updates to a subset of the microservices at a time, and then rolling the updates out to
+  the rest of the microservices over time.
+- Canary deployment Deploying updates to a small subset of the microservices, and then gradually rolling the updates out
+  to the rest of the microservices over time.
+- A/B testing Deploying updates to a subset of the microservices, and then comparing the performance of the updated
+  microservices with the performance of the unmodified microservices.
+
+---
+
+# Microservices Resilience, Observability and Monitoring
+
