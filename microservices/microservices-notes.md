@@ -1524,5 +1524,204 @@ There are several common cache eviction policies:
 
 ---
 
-# Microservices Resilience, Observability and Monitoring
+# Microservices Resilience
 
+### What is Microservices Resiliency ?
+
+- Microservice should design for resiliency, needs to be resilient to failures and must accept partial failures.
+- Design microservices to be resilient for partial failures, ability to recover from failures and continue to function.
+- Accepting failures and responding to them without any downtime or data loss.
+- Return the application to a fully functioning state after a failure.
+- Assume that failures will happen and design our microservices for resiliency.
+- Microservices are going to fail at some point, that's why we need to learn embracing failures.
+- Microservices system is considered to be resilient, if it can continue to function effectively despite failures or
+  disruptions.
+- Should be fault tolerant and handle failures gracefully.
+
+### Microservices Resiliency Patterns
+
+- To provide unbroken microservice, the architecture must be designed correctly.
+- We can apply to provide uninterrupted microservice, with “_Resilience Patterns_”.
+- Resilience Patterns can be divided into different categories according to the problem area they solve.
+- Ensuring the durability of services in microservice architecture is relatively difficult compared to a monolithic
+  architecture.
+- The communication between services is distributed and many internal or external network traffic is created for a
+  transaction.
+- Communication need between services and dependence on external services increases.
+- The possibility of occurring errors will increase.
+- There are several patterns that can be used to improve the resiliency of a microservices system.
+
+**1. Retry Pattern**
+
+Retrying a request if it fails or times out. Retries can be implemented at the client or the service level, to handle
+temporary failures or disruptions.
+
+- Inter-service communication can be performed by HTTP or gRPC and can be managed by developments.
+- When in comes to network, server and such physical interruptions may be unavoidable.
+- If one of the services returns HTTP 500 during the transaction, the transaction interrupted and an error may be
+  returned.
+- But when the user restarts the same transaction, it may work.
+- More logical to repeat the request made to the 500 returned service, user will be able to perform the transaction
+  successfully.
+- Microservices communications can fail because of transient failures, but this failures happen in a short-time and can
+  fix after that time.
+- For that cases, we should implement Retry Pattern.
+- Allow the microservice time to fix itself with self-correct, and extend the back-off time before retrying the call.
+- The back-off period should be exponentially incremental withdrawal to allow sufficient correction time.
+
+Drawbacks of Retry Pattern:
+
+- The Retry pattern should be used with caution.
+- If a service is experiencing persistent failures or is unavailable for an extended period of time, the retry pattern
+  result in an excessive number of failed requests.
+- In these cases, it is necessary to implement additional strategies, circuit breaking or fallback logic to prevent the
+  retry pattern from further impacting the system.
+
+**2. Circuit Breaker Pattern**
+
+Introducing a proxy or "circuit breaker" between a client and a service. It will open the circuit and prevent further
+requests from being sent to the service.
+
+- Method in electronic circuits that is constructed like circuit breaker switchgear.
+- Stop the load transfer in case of a failure in system to protect the electronic circuit.
+- Protects against failures in external dependencies, useful in microservice when failure in one service can have
+  cascading effects on other services.
+- Circuit breaker pattern prevents cascading failures in a system.
+- If one microservice depends on another microservice and that second microservice fails, the first microservice might
+  also fail.
+- If the first microservice is using a Circuit breaker pattern, it can prevent further calls to the second microservice
+  and continue to function.
+- .
+- Microservices that allows users to book flights.
+- This microservice depends on an external service for retrieving flight information.
+- If the external service becomes unavailable, the flight booking microservice will also become unavailable.
+- To protect against this type of failure, implement a circuit breaker pattern around the call to the external service.
+- If the external service becomes unavailable, the circuit breaker will trip, preventing further calls to the external
+  service.
+- This will help to prevent cascading failures in the system
+- .
+- Circuit Breakers pattern monitors the communication between the services and follows the errors that occur in the
+  communication.
+- When the error in the system exceeds a certain threshold value, Circuit Breakers turn on and cut off communication,
+  and returning previously determined error messages.
+- While Circuit Breakers is open, it continues to monitor the communication traffic.
+- If the requested service starts to return successful results, it becomes closed.
+
+Circuit Breaker States:
+
+- **Closed** The circuit breaker is not open and all requests are executed.
+- **Open** The Circuit Breaker is open and it prevents the application from repeatedly trying to execute an operation
+  while an error occurs.
+- **Half-Open** The Circuit Breaker executes a few operations to identify if an error still occurs. If errors occur,
+  then the circuit breaker will be opened, if not it will be closed.
+
+**3. Bulkhead Pattern**
+
+Partitioning a system into isolated components, or "bulkheads," to prevent the failure of one component from affecting
+the others.
+
+**4. Timeout Pattern**
+
+Should not wait for a service response for an indefinite amount of time, throw an exception instead of waiting too long.
+
+- Timeout Pattern provides that should not wait for a service response for an indefinite amount of time, throw an
+  exception instead of waiting too long.
+- It is used to handle scenarios where a service call takes longer than expected to complete.
+- Setting a maximum time limit for the service call to complete, if the time limit is exceeded, the call is considered
+  to have «timed out.»
+- In microservices, It used to prevent service calls from taking too long to complete.
+- If the payment processing service takes longer than expected to complete a request, the timeout pattern used to cancel
+  the request and return an error to the shopping cart service.
+
+**5. Fallback Pattern**
+
+Providing an alternative behavior or response if a request fails or times out.
+
+- Fallback Pattern provides an alternative behavior or response if a request fails or times out.
+- If a service is unavailable, the client could use a cached version of the data or display a default message to the
+  user.
+- It is used to provide an alternative course of action when a service call fails or takes too long to complete.
+- Define a fallback function that is called if the service call fails or times out, and the function provides an
+  alternative response.
+- In microservices, the fallback pattern help to improve the overall reliability and stability of the system.
+- If the payment processing service is unavailable or takes too long to complete a request, the fallback pattern could
+  be used to provide an alternative response.
+- I.e. displaying an error message or offering the user the option to try again later.
+
+--- 
+
+# Microservices Observability with Distributed Logging and Distributed Tracing
+
+- Microservice have a strategy for monitoring and managing the complex dependencies on microservices
+- Need to implement microservices observability with using distributed logging and tracing features.
+- Microservices Observability gives us greater operational insight.
+- Monitor and understand the behavior and performance of a system made up of microservices.
+- Distributed Logging and Distributed Tracing are two key tools that improve observability in microservices.
+- Distributed Logging is a practice of collecting, storing, and analyzing log data from multiple service instances.
+- Behavior of the system over time, identifying patterns and trends, and troubleshooting issues.
+- Distributed Tracing is tracking the flow of requests through a microservices architecture, to see how the different
+  service instances interact with each other.
+- See the performance of the system, identifying bottlenecks, and troubleshooting issues.
+
+### Elastic Stack for Microservices Observability with Distributed Logging
+
+- Elastic Stack is a collection of open-source tools for collecting, storing, and analyzing log data and other types of
+  data.
+- Used for microservices observability to provides a flexible and scalable platform for monitoring and understanding the
+  behavior.
+- **Elasticsearch** Distributed search and analytics engine that can be used to store and index log data and other types
+  of data.
+- **Logstash** Data collection and transformation tool that used to collect log data from different sources and send it
+  to Elasticsearch.
+- **Kibana** Data visualization and exploration tool that used to create dashboards and visualizations based on data.
+- **Beats** Collection of lightweight data shippers that used to collect log data and send it to Elasticsearch.
+
+### Distributed Tracing with OpenTelemetry using Zipkin
+
+- Distributed Tracing is used to track the flow of a request as it is processed by different microservices in a system.
+- Different microservices are interacting and identify issues or bottlenecks and troubleshooting issues in the system.
+- OpenTelemetry is an open-source project that provides a set of APIs for collecting and exporting telemetry data;
+  traces, metrics, and logs.
+- Zipkin is a distributed tracing system that collects and stores trace data from microservices, provides a web UI for
+  viewing and analyzing trace data.
+- To use OpenTelemetry with Zipkin for microservices distributed tracing, OpenTelemetry SDK would be integrated.
+- Allows to collect trace data as requests flow through the system, and send data to a Zipkin server for storage and
+  visualization.
+
+### Microservices Health Checks: Liveness, Readiness and Performance Checks
+
+- The process of monitoring the health and performance of individual microservices in a system.
+- The failure of a single microservice can have cascading effects on the rest of the system, important to identify and
+  address issues.
+- What is Health Checks for microservices ?
+- Health Checks for microservices are a way to monitor the health and performance of individual microservices in a
+  system.
+- Health checks used to determine whether a microservice is functioning properly and is able to handle requests.
+- There are 3 types of health checks that can be used for microservices:
+
+- Liveness Checks:
+  - Determine whether a microservice is still running. If a liveness check fails, it may indicate that the microservice
+    has crashed.
+- Readiness Checks:
+  - Determine whether a microservice is ready to handle requests. If a readiness check fails, it may indicate that the
+    microservice is not yet ready to handle traffic.
+- Performance Checks:
+  - Monitor the performance of a microservice, such as response times or error rates. If the results of a performance
+    check indicate that a microservice is not performing as expected.
+
+### Microservices Health Monitoring with Kubernetes, Prometheus and Grafana
+
+- Use Liveness and Readiness Probes
+  - Kubernetes provides liveness and readiness probes that can be used to monitor the health of individual
+    microservices.
+- Liveness probes check to see if a microservice is still running, and readiness probes check to see if a microservice
+  is ready to receive traffic.
+- Use Monitoring Tools
+  - Monitoring tools can be used to monitor the health and performance of microservices that can be integrated with
+    Kubernetes to provide alerts or notifications when issues arise. I.e. Prometheus, Grafana, Datadog.
+- Use Log Analysis Tools
+  - Analyze log messages generated by your microservices and identify issues or trends. Elastic Stack (Elasticsearch,
+    Logstash, Kibana), Fluentd, Splunk.
+- Set up Alerts and Notifications
+  - Setting up alerts and notifications can help to ensure that relevant parties are notified when issues arise,
+    allowing them to be addressed quickly. Slack, Teams, Email, SMS.
