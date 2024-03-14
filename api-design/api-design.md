@@ -27,7 +27,7 @@ Remember: we’ll just design the API for the mobile app of this bike rental ser
 communication between the server and the stations. Also, we’ll assume all users already have accounts and subscriptions
 for the service. In other words, we won’t care about user management or payment.
 
-Now let’s see the process we follow to design our RESTful API.
+Now let’s see the pro cess we follow to design our RESTful API.
 
 ## From Spec to RESTful API
 
