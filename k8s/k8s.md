@@ -675,12 +675,589 @@ Types of Secrets:
     - The Opaque type is the most common type of Secret and is used for storing arbitrary data such as passwords, keys,
       and other sensitive information. The data is stored as a base64-encoded string in the Secret object.
 - Service Account
-    - A Service Account Secret is automatically created by Kubernetes when a Service Account is created. This Secret
-      contains a token that can be used by pods to authenticate with the Kubernetes API server.
+  - A Service Account Secret is automatically created by Kubernetes when a Service Account is created. This Secret
+    contains a token that can be used by pods to authenticate with the Kubernetes API server.
 - TLS
-    - The TLS type is used for storing TLS certificates and keys for secure communication between services.
+  - The TLS type is used for storing TLS certificates and keys for secure communication between services.
 - Docker Registry
-    - The Docker Registry type is used for storing credentials for accessing private Docker image registries. The data
-      is stored in the Secret object as plain text.
+  - The Docker Registry type is used for storing credentials for accessing private Docker image registries. The data is
+    stored in the Secret object as plain text.
 
+# RBAC
 
+- Kubernetes has many resources and components.
+- Resources like secrets should have strict access.
+- For this reason, Kubernetes have a mechanism called Role-based access control (RBAC)
+- RBAC implements rules that define what service account/user is allowed to access certain components or resources in a
+  cluster.
+- Implementing RBAC in k8s is done using Role/Cluster Role and RoleBinding/ClusterBinding
+- Role/ClusterRole
+  - You will have to create a role or cluster role to define what user/service account is allowed to access.
+  - ClusterRole is applied at the cluster level.
+  - Whereas Role is applied at the namespace level.
+- RoleBinding/ClusterBinding
+  - Once you created a Role then you will have to create the RoleBinding.
+  - It will bind the k8s user to the role.
+  - The ClusterBinding is at the Cluster level whereas the RoleBinding is at the namespace level.
+
+How RBAC works in the k8s:
+
+- RBAC configuration uses the `rbac.authorization.k8s.io/v1/apiversion` to create roles and bindings
+- The role has verbs and nouns
+- verb :
+  - It is permission given to the service account/ user
+  - Users can be granted the below permissions while working on k8s resources.
+  - get, list, watch, create, update, patch, delete
+- nouns:
+  - They are the resources to which these permissions are applied like services, deployments etc.
+
+```yaml
+apiVersion: rbac.auth.k8s.io/v1
+kind: role
+metadata:
+  name: earthy-access-role
+  namespace: earthy
+rules:
+  apiGroup:
+    - apps
+    - autoscaling
+    - batch
+    - extensions
+    - policy
+    - rbac.auth.k8s.io
+  resources:
+    - pods
+    - deployment
+    - ingress
+    - jobs
+    - namespace
+    - nodes
+    - serviceaccount
+    - services
+verbs: [ "get","list","watch" ]
+
+---
+
+apiVersion: rbac.auth.k8s.io/v1
+kind: rolebinding
+matadata:
+  name: earthy-rb
+  namespace: earthy
+roleRef:
+  apiGroup: rbac.auth.k8s.io
+  kind: role
+  name: earthy-access-role
+subject:
+  - namespace: earthy
+    kind: serviceAccount
+    name: earthy-service-account
+```
+
+```shell
+kubectl create role earthy-access-role -- verb=get --verb=list --resource=service -n earthy 
+
+kubectl create rolebinding test 
+  --role = service-reader
+  --serviceaccount = foo:default
+  -n organisation
+```
+
+ClusterRole and ClusterBinding:
+
+- They are also same, the only difference is they don't have namespace parameter
+
+---
+
+# Network - Container Communication
+
+- Pod is the smallest unit
+- Now the question is why use pod when we can use containers?
+  - So when we start the container, we map the container port to the host port.
+  - Now so with thousands of containers running in the cluster, how we will map what ports are available?
+  - Hence k8s introduced pods.
+  - Also, pods add a level of abstraction for a container runtime.
+- When the pod is created on the node it got its own network namespace and virtual ethernet connection.
+- So pod is a small host, both with an IP address and a range of ports bind to containers.
+- This means you don't have to worry about port mapping.
+- The pod can have one container and max 6 containers.
+- When multiple containers run inside the same pod, as they are in the same network namespace, they can talk to each
+  other using localhost.
+- Pause Container:
+  - The pause container is available for every pod
+  - It is also called a sandbox container
+  - It reserves and holds the network namespace.
+  - It enables the communication between containers.
+  - When the container dies, the pod creates a new container and keeps the pause container.
+  - Whereas when the pod dies, a new pause container is created which will give a new IP address and network namespace
+    to the newly created pod.
+
+---
+
+# Network - Pod to pod
+
+- Each Pod in k8s is assigned a dedicated IP address with a dedicated namespace
+- K8s imposes 3 fundamental requirements for any network.
+  - Pods on a node can communicate with all pods on all nodes with NAT.
+  - Agents on the node (System daemons, kubelet) can communicate with all pods on that specific node.
+  - Pods on the host network can communicate with pods on all nodes with NAT (For Linux which supports pods running on
+    host network)
+
+Communication between pods running on the same node:
+
+- K8s created a virtual ethernet adapter for every pod, and it is connected to the network adapter of the node.
+- When a network request is made, the pod connects through the network adapter of the node through the tunnel.
+- In the K8s node, there is a network bridge called cbro.
+- All pods are part of this network bridge.
+- When a network request is made this bridge checks for the correct destination pod and directs the traffic to the
+  destination pod.
+
+Communication between pods in different nodes:
+
+- When a requested IP cannot be found within the pod, the network bridge directs the traffic to the default gateway.
+- This will then look for the IP address at Cluster Level.
+- K8s keeps a record of all the IP ranges associated with each node.
+- IP is assigned to a pod within the nodes from the range assigned to the node.
+- When a request is made to the IP address in a cluster, it will
+  - Look for the IP range for the requested IP.
+  - Then directs the traffic to the specific node and then to the correct pod.
+
+---
+
+# Network - Pod to Service
+
+- Service is an abstraction that routes traffic to the set of pods.
+- In other words, the service will map the single IP address to the set of pods.
+- When a network request is made the service proxy the request to the necessary pod.
+- This proxy happens via a process called Kube proxy that runs in each node.
+- Service will get an IP within the cluster.
+- Request first reaches service IP before reaching actual pod IP.
+- This decouples the dependency on networking directly to the pod.
+- Thus pods can be created and destroyed without worrying about network connectivity, as the service will automatically
+  update its endpoint.
+- Label selector is a core grouping primitive in k8s which identifies the set of objects.
+- The label selector will look for a specified label in each pod and match them with the service accordingly.
+- DNS for internal routing
+  - Each cluster comes with in-build DNS
+  - DNS is assigned to each service in a cluster.
+  - DNS is assigned to each service in a cluster.
+
+---
+
+# Network - Internet to Service
+
+Introduction:
+
+- Ingress refers to the act of entering - Traffic entering the cluster
+- Egress refers to the act of existing - Traffic that exits the cluster.
+- Ingress is a native k8s object that defines the routing rules- DNS routing configurations
+- The Ingress controller does the actual routing by reading the routing rules from ingress objects which are stored in
+  etcd.
+
+Without Ingress:
+
+- Before k8s ingress, a custom Nginx/HAProxy k8s deployment would be exposed as a Load Balancer service.
+- Routing rules would be added as a config map to these pods.
+- Whenever there is a change in DNS or a new route entry to be added, it gets updated in Configmap, and pods are
+  reloaded ot it is re-deployed.
+- Request first goes to the Load Balancer , through LoadBalancer it goes to specific node.
+- Using Node port it is then forwarded to service Cluster IP.
+- This ClusterIP forwards the request to Nginx pod and then via pod to ClusterIP of actual application pods.
+
+![img.png](pics/img.png)
+
+With Ingress:
+
+- In the same implementation with ingress, there is a reverse proxy (Ingress Controller) between the load balancer and
+  the k8s service endpoint.
+- K8s ingress follows the similar pattern as above.
+- In Ingress routing rules are maintained as k8s objects as Ingress insted of configMap.
+- And Instead of NGInx/HAProxy, we have an ingress controller, which fetches these routing rules defined in k8s etcd.
+- These routing rules are fetched dynamically.
+
+![img_1.png](pics/img_1.png)
+
+K8s Ingress Resource:
+
+- AS mentioned earlier, it is k8s native object which defines the DNS routing rules.
+- It means you map the external DNS traffic to the internal k8s service endpoints.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  namespace: dev
+spec:
+  rules:
+    - host: test.apps.example.com
+      http:
+        paths:
+          - path: ""
+            pathType: ""
+            backend:
+              service:
+                name: hello-service
+                port:
+                  number: 8080
+```
+
+- The routing rule defines that all traffic to test.apps.example.com should hit the service name hello-service residing
+  in dev namespace.
+- We can add multiple routing rules for path based routing, and also we can add tls configuration etc.
+- The external traffic hits the Ingress controller service endpoint , configured using Load Balancer.
+
+K8s Ingress Controller:
+
+- Ingress controller is not a native k8s implementation.
+- We need to setup an Ingress controller for Ingress setup to work.
+- There are several open-source Ingress controller available.
+- It is typically a reverse web proxy server implementation in the cluster.
+- In short, it is reverse web proxy server implementation deployed as k8s deployment and exposed as service type Load
+  Balancer.
+- Can have multiple Ingress controllers in Cluster.
+
+![img_2.png](pics/img_2.png)
+
+List of Ingress Controller:
+
+- Nginx Ingress Controller (Community & From Nginx Inc)
+- Traefik
+- HAproxy
+- Contour
+- GKE Ingress Controller for GKE
+- AWS ALB Ingress Controller Fro AKS
+- Azure Application Gateway Ingress Controller
+
+---
+
+# Service
+
+- Provides abstraction that represents a set of logical pods where the application is running.
+- Pods are ephemeral, and hence we cannot rely on pod IP for communication.
+- Service gets a virtual IP (Cluster IP) and lives until explicitly deleted.
+- It redirects the request to the appropriate pods.
+
+```yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9376
+```
+
+**Types:**
+
+- ClusterIP
+- NodePort
+- LoadBalancer
+- Ingress
+
+NodePort, LoadBalancer and Ingress allow the external traffic into the k8s cluster.
+
+ClusterIP:
+
+- It is the default type
+- It exposes IP which is internal in the cluster.
+
+NodePort:
+
+- It Opens a specific port on all nodes to accept traffic from the external world.
+- Any traffic sent to this NodeIP/port will be redirected to the service cluster IP.
+
+LoadBalancer:
+
+- It is the more standard way of exposing a k8s service externally.
+- If we use the google k8s engine, it creates a network load balancer and exposes the IP.
+- This IP will load balance the traffic to the appropriate node.
+- Then using NodePort it is redirected to Service Cluster IP
+
+Ingress:
+
+- It is not a service
+- It sits in front of multiple services and performs smart routing between them.
+- There are several types of ingress controller that has different routing capabilities.
+- In GKE, the ingress controller creates an http Load balancer which routes the traffic to services in the load balancer
+  using path-based routing or using sub domain.
+
+Service for external workload:
+
+- A service can be applied to an external workload.
+- This allows the pods to connect to the external backend or db by providing the layer of abstraction.
+- Eg: Pod can connect to the service and sends the traffic to the external backend without knowing about external
+  backend endpoints.
+- In order to do so service should be defined without label selector.
+- After a service is created, the endpoint of the external backend needs to be created and specified.
+
+```yaml
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: my-service
+subsets:
+  - addresses:
+      - ip: 62.82.24.195
+        ports:
+          - port: 9376
+```
+
+All incoming traffic to my-service will get routed straight through to endpoint 62.82.24.195:9376
+
+External Name:
+
+An incoming request for the service gets routed by Kubernetes DNS to the external domain specified
+
+For example, to redirect traffic sent to my-service to `my.database.example.com`
+
+```yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: my.database.example.com
+```
+
+Service Discovery:
+
+- Uses k8s cluster DNS.
+- DNS server watches the k8s API for new service created.
+- Once service is created, it creates a set of DNS records for each.
+- Pods can access service using these DNS (service-name)
+- If outside of namespace (service-name.namespace)
+
+---
+
+# Replica Set
+
+- ReplicaSet is one of the controllers that makes sure we have specified number of pods running.
+- Without ReplicaSet we will have to create multiple manifests of pods.
+- ReplicaSets makes use of set-based LabelSelector (in, notin and exists)
+  - It manages all the pods that matches the label selector.
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: some-name
+  labels:
+    app: some-App
+    tier: some-Tier
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: some-Tier
+  template:
+    metadata:
+      labels:
+        app: some-App
+        tier: some-Tier
+    spec:
+      containers:
+        - name: container-name # You need to provide a name for the container
+          image: image-name # You need to specify the image to use for the container
+          # Add other container specifications as needed
+```
+
+> In general Kubernetes recommend that we use deployment (a higher-level concept that manages ReplicaSets and provides
+> declarative updates to pods along with a lot of other useful features) controller instead of ReplicaSets.
+
+---
+
+# Daemon Sets
+
+- K8s is a distributed system and there must be some functionality which will allow the administrator to run
+  platform-specific applications on all nodes.
+- This is where DeamonSets comes into the picture.
+- DeamonSet is a native k8s object and is designed to run system daemons.
+- It is designed to ensure that a single pod runs on every node, you cannot scale the pods in a node.
+- And for some reason, if the pod is deleted, daemon set controller will be going to create the pod once again.
+- Using nodeSelector, nodeAffinity, Taints and tolerances you can restrict the pods getting created on some nodes.
+
+Use Cases:
+
+- KubeProxy runs as DeamonSet
+- Cluster Log Collector: Running a log collector on every node to centralize k8s logging. Eg: fluentd, logstash,
+  fluentbit
+- Cluster Monitoring: Run Prometheus node exporter.
+- Security & Compliance: Running CIS benchmark on every node using tools like kube-bench.
+- Storage provisioning
+- Network Management
+
+Example:
+
+Deploy a fluentd logging agent as a Deamonset on all the cluster worker nodes.
+
+```yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd
+  namespace: logging
+  labels:
+    app: fluentd-logging
+spec:
+  selector:
+    matchLabels:
+      name: fluentd
+  template:
+    metadata:
+      labels:
+        name: fluentd
+    spec:
+      containers:
+        - name: fluentd-elasticsearch
+          image: quay.io/fluentd_elasticsearch/fluentd:v2.5.2
+          resources:
+            limits:
+              memory: 200Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          volumeMounts:
+            - name: varlog
+              mountPath: /var/log
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+```
+
+---
+
+# Deployment
+
+- Kubernetes Deployment is the process of providing declarative updates to Pods and ReplicaSets. It allows users to
+  declare the desired state in the manifest (YAML) file, and the controller will change the current state to the
+  declared state.
+
+Example of deployment:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: webserver
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: webserver
+  template:
+    metadata:
+      labels:
+        app: webserver
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+```
+
+Discovering the deployment details:
+
+- When managing a Kubernetes cluster, the initial step would be to check for a successful deployment. For this purpose,
+  we can use the kubectl rollout status and kubectl get deployment commands.
+
+```shell
+kubectl rollout status deployment nginx-deployment
+kubectl get deployment nginx-deployment
+```
+
+![img_3.png](pics/img_3.png)
+
+Managing Deployment:
+
+- What differentiates deployments from a simple ReplicaSet is that deployments enable users to update the pods (pod
+  templates) without causing any interruption to the underlying application.
+
+Performing Rolling updates:
+
+- Using the kubectl set image command
+- Changing the deployment configuration file
+
+`kubectl set image deployment nginx-deployment nginx=nginx:1.19.10`
+
+![img_4.png](pics/img_4.png)
+
+`kubectl edit deployment nginx-deployment`
+
+Deployment Strategies:
+
+- Recreate
+- RollingUpdate
+
+`kubectl describe deployment nginx-deployment | grep Strategy`
+
+![img_5.png](pics/img_5.png)
+
+Pausing & Resuming Deployments:
+
+- Kubernetes deployments provide the ability to pause and resume deployments. This enables users to modify and address
+  issues without triggering a new ReplicaSet rollout.
+
+`kubectl rollout pause deploy nginx-deployment`
+
+![img_6.png](pics/img_6.png)
+
+- Now, if we update the Nginx image in the paused status, the controller will accept the change, yet it will not trigger
+  the new ReplicaSet rollout. If we look at the rollout status, it will indicate a pending change.
+
+```shell
+kubectl set image deployment nginx-deployment nginx=nginx:1.20 --record
+kubectl rollout status deployment nginx-deployment
+```
+
+![img_7.png](pics/img_7.png)
+
+- You can simply run the “rollout resume deploy” command to resume the deployment.
+
+Scaling Deployment:
+
+- Manually
+
+```shell
+kubectl scale deployment nginx-deployment --replicas=8
+kubectl rollout status deployment nginx-deployment
+```
+
+- Auto-Scaling Rule
+
+`kubectl autoscale deployment nginx-deployment --min=5 --max=10 --cpu-percent=70`
+
+- Rolling Back a deployment:
+
+- Kubernetes also supports rolling back deployments to the previous revision Let’s assume that we have updated our
+  configuration with an incorrect image. (We will be using the caddy webserver in this example.)
+
+`kubectl set image deployment nginx-deployment nginx=caddy:latest --record`
+
+- This is where the Deployment controller’s history function comes into play. The controller keeps track of any changes
+  to the pod template and keeps them in history. When we specify the record flag in a command, it will be reflected in
+  the history.
+
+`kubectl rollout history deployment nginx-deployment`
+
+![img_8.png](pics/img_8.png)
+
+- We can use the revision number to inform the deployment controller to roll back our deployment to the previous
+  revision.
+
+`kubectl rollout history deployment nginx-deployment --revision=3`
+
+```shell
+kubectl rollout undo deployment nginx-deployment --to-revision=3
+kubectl rollout status deployment nginx-deployment
+```
