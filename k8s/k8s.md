@@ -672,8 +672,8 @@ How application retrieved external secret:
 Types of Secrets:
 
 - Opaque
-    - The Opaque type is the most common type of Secret and is used for storing arbitrary data such as passwords, keys,
-      and other sensitive information. The data is stored as a base64-encoded string in the Secret object.
+  - The Opaque type is the most common type of Secret and is used for storing arbitrary data such as passwords, keys,
+    and other sensitive information. The data is stored as a base64-encoded string in the Secret object.
 - Service Account
   - A Service Account Secret is automatically created by Kubernetes when a Service Account is created. This Secret
     contains a token that can be used by pods to authenticate with the Kubernetes API server.
