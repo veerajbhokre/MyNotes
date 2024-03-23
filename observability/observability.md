@@ -222,8 +222,173 @@ improvements, and enhance user experiences.
     - Histogram metrics, such as latency percentiles, can be visualized and filtered similar to other metrics.
 
 - **Conclusion:**
-    - Tracing and metrics work together to provide comprehensive insights into service performance.
-    - Generated metrics from traces can be utilized for dashboarding and alerting, enhancing observability.
+  - Tracing and metrics work together to provide comprehensive insights into service performance.
+  - Generated metrics from traces can be utilized for dashboarding and alerting, enhancing observability.
 
 ---
+
+# Logs
+
+## Concepts of Logging and Log Management
+
+- **Introduction to Logging:**
+  - Logging is a fundamental concept in observability and monitoring, providing textual records of events.
+  - Default logs are often available for various infrastructure components, such as access logs for proxy services.
+  - Developers also output log lines within applications to track system states and events.
+
+- **Characteristics of Logs:**
+  - Logs are typically unstructured text lines, making them challenging to analyze.
+  - Structured logs provide a more organized format, commonly using JSON to define key fields.
+  - Structured logs offer several advantages, including readability, analysis, and reduced log size.
+  - JSON format is widely supported by logging tools, enabling enhanced processing capabilities.
+
+- **Benefits of Structured Logs:**
+  - Enhanced readability: Structured logs are easier to interpret and analyze.
+  - Analytical capabilities: Common fields in structured logs facilitate effective log analysis.
+  - Reduced log size: Selective inclusion of fields minimizes log size, optimizing storage and processing.
+  - Tooling support: Many logging tools support JSON format, enabling seamless integration and processing.
+
+## Best Practices for Logging
+
+- **Content Considerations:**
+  - Be mindful of the content of your logs, especially sensitive data like PII or financial information.
+  - Ensure compliance with industry regulations regarding data protection.
+
+- **Log Retention:**
+  - Define the lifecycle of your logs based on your specific use case.
+  - Consider factors such as active query duration and archival needs.
+  - Monitor log growth and retention policies to optimize costs.
+
+- **Tooling Selection:**
+  - Choose logging tools based on the intended purpose of your logs.
+  - Consider factors such as real-time logging, analytics capabilities, and cost-effectiveness.
+  - Align tooling with your team's use case to avoid unnecessary expenses.
+
+- **Log Structuring:**
+  - Structure your logs to reflect important information based on their purpose.
+  - Include relevant data, such as infrastructure details or customer IDs for e-commerce platforms.
+
+- **Log Level Definition:**
+  - Categorize logs into different levels (e.g., error, warning, debug) to indicate severity.
+  - Utilize log levels for effective alerting and analysis.
+
+- **Message Clarity:**
+  - Provide clear and concise messages in logs to describe events accurately.
+  - Enable easy understanding and action by consumers of the logs.
+
+- **Multiple Use Cases:**
+  - Recognize the diverse uses of logs beyond troubleshooting, including auditing and analytics.
+  - Tailor log formats and contents to suit specific purposes beyond code debugging.
+
+## Log Collection and Application
+
+- Logs can be collected in different ways, such as enabling logging configurations for services or defining logs for
+  applications.
+- Logging frameworks are available for various programming languages, simplifying the process of defining logs.
+- Structured logs should be written to leverage logging tools for analysis, grouping logs by level or tags for easier
+  understanding.
+- Log filtering and analysis help in understanding service behavior and performance.
+- Some tools support alerting based on log messages, specific field values, or log counts to indicate systemic issues.
+- Logs can be used to generate metrics, such as counting log types or calculating task latency using start and end time
+  fields.
+- Logs are a low-effort way to start with observability, offering impactful insights when managed properly.
+
+---
+
+# Monitoring Techniques
+
+## Application Performance Monitoring (APM):
+
+- **Introduction:**
+  - APM utilizes observability signals (metrics, logs, traces) to understand application behavior comprehensively.
+  - Typically focuses on monitoring backend applications by measuring API endpoint performance.
+  - Apdex score is commonly used to rate application health on a scale from zero to one.
+  - APM allows going from overall system health to understanding specific functions or endpoints.
+  - Proper tagging and application of principles enhance the effectiveness of APM.
+
+- **Implementing APM:**
+  - APM can be enabled for services by instrumenting code based on the programming language and observability tool used.
+  - Most observability vendors offer APM products with documentation on instrumentation.
+
+- **Grafana Cloud APM:**
+  - In Grafana Cloud, APM is accessed through the observability section.
+  - Provides a list of services with associated metrics such as request rate, error rate, and latency.
+  - Integration of metrics, traces, and logs allows comprehensive analysis within the same view.
+  - Service map visualizes downstream and database dependencies, enabling drill-down into individual operations.
+
+- **Benefits of APM:**
+  - Improved user experience by presenting service performance holistically without the need to switch between data
+    sources.
+  - Eliminates context switching between metrics, logs, and traces, streamlining the observability process.
+  - Facilitates better observability KPIs such as meantime to detect and resolve incidents.
+  - Cost considerations should be taken into account when implementing APM tools.
+
+- **Other APM Tools:**
+  - Mature APM tools in the market include Datadog, New Relic, Honeycomb, and Elastic APM.
+  - Cost should be considered when selecting and implementing APM solutions.
+
+## Synthetic Monitoring:
+
+- **Introduction:**
+  - Acts as black box monitoring to check if an API endpoint responds as expected when given specific inputs.
+  - Conditions checked include specific status codes, expected messages (text or JSON), or completion time of requests.
+  - Often used to measure uptime and detect system performance issues when outputs deviate from expectations.
+  - Results of synthetic monitors can trigger alerts indicating system performance issues.
+
+- **Implementation with Grafana Cloud:**
+  - Access synthetic monitoring in Grafana Cloud under the Observability section.
+  - Create or view checks to monitor endpoints.
+  - Setup includes defining job name, target endpoint, location for testing, run frequency, and timeout.
+  - Additional configurations for HTTP request method, TLS settings, authentication, and advanced options.
+  - Alerts can be set up based on test results and sensitivity.
+  - Dashboard provides summary of test metrics including uptime, reachability, and latency breakdown.
+  - Types of checks include ping, DNS resolve, trace route, and TCP checks.
+  - Synthetic monitoring provides insights into uptime, reachability, and latency of services by running dummy checks.
+
+## Infrastructure Monitoring:
+
+- **Introduction:**
+  - Measures performance of underlying infrastructure resources like VMs or instances.
+  - Common metrics include CPU utilization, memory utilization, and disk utilization.
+  - Ensures sufficient resources for efficient application operation.
+
+- **Types of Infrastructure Monitoring:**
+  - VMs or virtual instances: Measure CPU, disk, and memory utilization.
+  - Databases: Specific metrics tailored to database performance.
+
+- **Implementation with Docker:**
+  - Utilize scripts or integrations to collect Docker metrics.
+  - Scripts can target Docker metrics from Docker Desktop or other Docker environments.
+  - Explore tab in Grafana Cloud allows querying and visualization of Docker metrics.
+  - Observability tools provide integrations for collecting infrastructure metrics.
+  - Integrations come with default metrics and dashboards for easy monitoring setup.
+
+- **Using Observability Tooling:**
+  - Grafana Cloud's infrastructure tab offers integrations for various infrastructure types.
+  - Add new integrations for different types of infrastructure.
+  - Configure integrations to start collecting metrics and utilizing built-in dashboards and alerts.
+
+## Product Monitoring:
+
+- **Introduction:**
+  - Customizes observability signals to measure specific aspects of a product.
+  - Examples include tracking sales for an e-commerce store or monitoring partner reliability for a FinTech company.
+  - Requires customization of metrics, logs, and traces tailored to the product.
+
+- **Custom Metrics, Traces, and Logs:**
+  - Utilizes custom metrics, traces with custom attributes, and log attributes.
+  - Captures data unique to the product being monitored.
+
+- **Choosing the Right Metrics:**
+  - Importance of selecting metrics that accurately reflect the product's performance.
+  - Ensures measurement of relevant data in the most effective manner.
+
+- **Instrumentation Process:**
+  - Follows documentation of observability tooling for instrumenting product metrics.
+  - Utilizes product-specific tags and attributes in traces and logs for context.
+
+- **Analysis and Dissection:**
+  - Uses tags and attributes to analyze and dissect observability data for product context.
+  - Enables understanding of how product performance aligns with business goals.
+
 
