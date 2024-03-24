@@ -216,10 +216,10 @@ improvements, and enhance user experiences.
     - OTLP receiver and exporter are configured to send traces to Grafana Cloud.
 
 - **Interacting with Traces in Grafana Cloud:**
-    - Traces can be explored using TraceQL or the Search tab, filtering by service name, span name, duration, or tags.
-    - Service graph visualization provides insights into request flows and backend interactions.
-    - Metrics generated from traces can be explored using the Prometheus data source in Grafana Cloud.
-    - Histogram metrics, such as latency percentiles, can be visualized and filtered similar to other metrics.
+  - Traces can be explored using TraceQL or the Search tab, filtering by service name, span name, duration, or tags.
+  - Service graph visualization provides insights into request flows and backend interactions.
+  - Metrics generated from traces can be explored using the Prometheus data source in Grafana Cloud.
+  - Histogram metrics, such as latency percentiles, can be visualized and filtered similar to other metrics.
 
 - **Conclusion:**
   - Tracing and metrics work together to provide comprehensive insights into service performance.
@@ -292,6 +292,14 @@ improvements, and enhance user experiences.
 - Logs can be used to generate metrics, such as counting log types or calculating task latency using start and end time
   fields.
 - Logs are a low-effort way to start with observability, offering impactful insights when managed properly.
+
+---
+
+# OpenTelemetry
+
+![img.png](pics/img.png)
+
+![img_1.png](pics/img_1.png)
 
 ---
 
@@ -391,4 +399,71 @@ improvements, and enhance user experiences.
   - Uses tags and attributes to analyze and dissect observability data for product context.
   - Enables understanding of how product performance aligns with business goals.
 
+---
+
+# Utilizing observability signals:
+
+## Dashboards Best Practices:
+
+- **Dashboards Best Practices:**
+  - Ensure clear titles and descriptions for easy understanding and navigation.
+  - Group panels logically based on the story being conveyed.
+  - Keep dashboards short, concise, and visually appealing.
+  - Use thoughtful panel types to effectively communicate the data.
+
+- **Clear Titles and Descriptions:**
+  - Titles and descriptions should accurately depict the purpose and content of the dashboard.
+  - Facilitates easy discovery and navigation for users, including those unfamiliar with the dashboard creator.
+
+- **Logical Grouping of Panels:**
+  - Group panels according to their subject matter or use.
+  - Enhances dashboard navigation and comprehension.
+  - Utilize dashboard artifacts like rules to organize and segment data effectively.
+
+- **Short and Easy on the Eye:**
+  - Keep dashboards concise to prevent information overload.
+  - Optimize message communication while maintaining user engagement.
+  - Avoid overwhelming users with excessive data.
+
+- **Use of Thoughtful Panels:**
+  - Choose panel types that best convey the story of the data.
+  - Consider different visualization options (e.g., table, pie chart) and select the most effective one.
+  - Experiment with panel types to find the one that works best for the intended message.
+
+- **Panel Types and Visualizations:**
+  - Explore various panel types available in the observability tooling.
+  - Select visualizations that align with the storytelling objectives.
+  - Experiment with different visualizations to find the most suitable ones for your data.
+
+- **Tool Dependency:**
+  - Available panel types may vary depending on the observability tooling used.
+  - Experimentation is encouraged to find the most suitable visualization options.
+
+## Importance of Alerting:
+
+- **Importance of Alerting:**
+  - Proactively acts on observability signals to prevent issues.
+  - Ensures timely response to system anomalies without constant monitoring.
+
+- **Setting up Alerts:**
+  - Define thresholds based on collected signals to indicate system health.
+  - Choose appropriate metrics or logs to monitor.
+  - Configure alert conditions and parameters for triggering.
+
+- **Alerting Platforms:**
+  - Utilize observability platforms with built-in alerting capabilities.
+  - Common methods of alert propagation include emails, Slack, or Microsoft Teams.
+  - Integrations with various platforms facilitate team-wide alerts where teams primarily work.
+
+- **Grafana Cloud Alerting:**
+  - Navigate to Alerting menu in Grafana Cloud to manage alert rules.
+  - Configure alert names, queries, and conditions for specific metrics or logs.
+  - Set thresholds for triggering alerts based on predefined conditions.
+  - Add annotations and Runbook URLs for detailed instructions on alert resolution.
+  - Configure notifications for alert propagation to designated contact points.
+
+- **Notification Routing:**
+  - Preview and configure routing for alert notifications.
+  - Specify contact points such as emails, Slack, or Grafana OnCall for alert delivery.
+  - Explore available integrations to determine the best fit for the use case.
 
