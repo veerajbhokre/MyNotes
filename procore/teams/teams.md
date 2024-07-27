@@ -1,3 +1,5 @@
+# Teams
+
 ```lau
 Teams
 |
@@ -29,8 +31,6 @@ Project Timeline Feature Development
     |
     |-- Engineering
     |   |-- Develops and codes the feature
-    |   |-- Ensures smooth functionality
-    |
     |-- Product
     |   |-- Defines vision and requirements
     |   |-- Gathers user feedback
