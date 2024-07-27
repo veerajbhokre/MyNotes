@@ -21,7 +21,7 @@ Teams
     |-- Sales
     |-- Revenue Operations & Enablement
     |-- Customer Success
-    |-- Global Partnerships & Alliances
+    |-- Global Partnerships & Alliances  
 ```
 
 ```lau
