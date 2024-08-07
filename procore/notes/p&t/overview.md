@@ -1,5 +1,7 @@
 # Procore Product & Technology (P&T) Overview
 
+https://docs.google.com/presentation/d/1YWlHrWtanv47OjC8mz8H3Qrv5BbZ-ojWw5VmdgxwpCI/edit#slide=id.g2999ff55e5b_0_1074
+
 The organization is divided into four main parts:
 
 - Engineering
