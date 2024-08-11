@@ -63,9 +63,9 @@
     - 3 times the CTC
     - [Policy Link](https://thecore.procore.com/pac/intranet_attachments/india_benefits/india_personal_accidentpdf)
 
-- **Child Care Allowance**
+- **Child Care Allowance** (TODO)
     - ₹8,000 per child per month
     - [Policy Link](https://thecore.procore.com/pac/intranet_attachments/india_benefits/india_childcare_allowance_jul_24docxpdf)
 
-- **Procore Perks**
+- **Procore Perks** (TODO)
     - [Procore Perks Presentation](https://docs.google.com/presentation/d/1w1HMEZDXqz1Nnie6HU-enQrfMbeqJubu2M5z1vZODVs/edit#slide=id.p)
