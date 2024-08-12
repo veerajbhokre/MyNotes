@@ -291,3 +291,33 @@ Once the project has reached a state of almost complete, the Contractor will beg
 General Contractors, Specialty Contractors, and Vendors assemble several documents at the end of a project. These are collectively referred to as Close Out Documents, Handover Documents, or Closeout Books. They consist of several key pieces of information that help the Owner understand how to operate their building and how to maintain/repair it as needed. These Close Out Documents often contain copies of approved submittals, warranties for materials and workmanship (we will discuss this more in the Post-Construction section), As-Built Drawings, and Operation and Maintenance Manuals--also known as O&M Manuals.
 
 
+---
+
+# Post Construction Phase
+
+In the initial weeks and months after the construction has been completed, the Contractors will receive final payments and may spend some time reflecting on how the project went, as a way to improve for the next project. 
+
+In Post Construction, the Owner is occupying and utilizing the space. Initially, the Contractors will be on standby for anything that may initially go wrong in the space; we call this the warranty or defects liability period. After this initial period, the Owner continues to occupy and maintain the space and may eventually do other construction projects or improvements.
+
+**Final Payment:**
+
+Contractors are not fully paid for their work until closeout is complete. After final inspections, the punch list process, and handover documents are completed, a Contractor can invoice for final payment. Typically there are contractual and jurisdictional rules that require payments be made to the General Contractor and Specialty Contractors within a certain timeline.
+
+Final payments include retainage, also called retention. Retainage refers to a certain value, normally 5% to 10%, that is held back from the Prime Contracts and subcontracts as a way to ensure that all work is completed.
+
+
+**Evaluation:**
+
+There is a critical component to project completion that most might not think of when they think of the end of a construction project, and that is the post-project evaluation. How did the project go? Did it go as planned? Every construction project has the capacity to inform the next. 
+
+In Evaluation, project teams will analyze the original project schedule and the original project budget in contrast with the actual schedule and project cost to see if they were adequate estimations. They will discuss how well teams worked with Vendors and Suppliers and who they may want to do business with again, as well as how aligned, effective, and safe everyone felt on the job. 
+
+Remember, the data collected at the end of a job becomes the same historical data that might be used to later budget, schedule, and staff another one. In a chaotic industry like construction, these learnings are crucial to the success of future projects.
+
+
+## Post Construction Stages
+
+1. Warranty
+
+
+2. Operations and Maintenance
