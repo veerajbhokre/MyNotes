@@ -136,3 +136,24 @@ No matter the contract type, the legal agreement reached between the General Con
 ## Procurement
 
 
+Once subcontracts and purchase orders have been bought out, the Specialty Contractors and Vendors have the contractual assurances they need to start procuring materials and equipment for their scopes of work, as well as scheduling and lining up crews to complete the work. Similarly, the General Contractor has the contractual leverage they need to make sure that milestones and deadlines are met.
+
+In this section, we will discuss how the project schedule drives the order in which materials are procured and crews are scheduled, and then take a closer look at how Contractors gain approvals on their materials and equipment before they proceed with ordering and fabricating items.
+
+**Building the Project Schedule :**
+
+So, how do we even begin to predict how long a construction project will take to build? All projects start with something called Master Planning. This work is used to determine the major milestones and completion dates that will inform the overall duration of the project. Typically, throughout the Preconstruction phase and Construction phase stakeholders are involved in creating and updating the master planning schedule.
+
+There are many techniques, methods, and theories when it comes to building an effective project schedule. We won't dive into all of that here, but having an understanding of how a project is scheduled will help you better grasp how things function in the next phase of the project. 
+
+Scheduling can help construction teams determine who should be onsite and when, and in what sequence things should be completed. Similarly, the schedule helps inform the General Contractor, Specialty Contractor and Design Team of when certain materials must be ordered to arrive on time for the project.
+
+**Submittals:**
+
+Before General and Specialty Contractors order their materials and equipment or begin fabricating items in their shops, they seek approvals to ensure that they are ordering/fabricating the correct items.
+
+A submittal is the written or physical information provided by a Contractor to the Design Team for final approval--a formal confirmation--of building materials and equipment before they are ordered, fabricated, and delivered to the project. The General Contractor and Specialty Contractor will use the schedule we discussed in the previous section to help them prioritize their submittals.
+
+**Why is There a Procurement Process?**
+
+We start the Procurement process during Preconstruction to make sure that materials and Specialty Contractors are prepared to arrive onsite at the right time during Construction. It can take weeks or months to receive orders and to fabricate materials or to have crew availability. Having a Procurement process gives Contractors the strong start they need to be successful on their projects. Note that the Procurement process often continues into the Construction phase.
