@@ -278,3 +278,104 @@ Reconciliation ensures that financial records are accurate by matching data acro
 
 
 ![alt text](./pics/image-1.png)
+
+
+
+# Overview of the Schema
+
+	1.	Transactions/Distributions:
+	•	This table captures the initial financial transaction details.
+	•	Key fields:
+	•	Id: Unique identifier for each transaction.
+	•	Original Trans Id: Links the transaction to its original source.
+	•	Amount: The total amount involved in the transaction.
+	•	Status: Current status (e.g., completed).
+	•	Transaction Type: Type of transaction (e.g., payout).
+	•	Date: When the transaction occurred.
+	•	Currency: The currency used.
+	2.	Distributions:
+	•	This table breaks down the transactions into different components for detailed accounting.
+	•	It appears to be closely related to the transactions table with a one-to-one relationship.
+	•	Key fields:
+	•	Id: Unique identifier.
+	•	Original Trans Id: Links back to the original transaction.
+	•	Amount: Matches the amount from the transaction.
+	•	Status, Transaction Type, Date, Currency: Same as in the transaction table.
+	3.	Subledger Entries:
+	•	This is where detailed accounting records for each distribution are stored.
+	•	Key fields:
+	•	GL Impact Amt: The amount that will affect the General Ledger.
+	•	Acct Rule Applied: The specific accounting rule applied to this transaction.
+	•	Acct Treatment: Specifies the account where the amount should be recorded.
+	•	Acct - DR: The account to debit.
+	•	Acct - CR: The account to credit.
+	•	Legal Entity, Department: Additional context for where the transaction applies within the organization.
+	4.	Journal Entries:
+	•	Journal entries are summaries of subledger entries, which are then posted to the General Ledger.
+	•	Key fields:
+	•	Journal Transaction Id: Links to the subledger entries.
+	•	GL Impact Amt: Summed amounts that will affect the GL.
+	•	DR, CR: Debit and Credit amounts.
+	•	Date, Currency: When the entry is posted.
+	5.	General Ledger (Journals):
+	•	The General Ledger is the final destination for these transactions, reflecting the overall financial position.
+	•	Key fields:
+	•	Journal Entry Id: Unique identifier for each GL entry.
+	•	GL Impact Amt: Total impact on the GL.
+	•	DR, CR: Final debit and credit balances.
+	•	Balance - DR, Balance - CR: Running balances after the entries.
+
+Example Walkthrough
+
+Let’s go through the example provided in the schema with the following details:
+
+	•	Transaction 1:
+	•	Original Trans Id: 30
+	•	Amount: $500
+	•	Status: Completed
+	•	Transaction Type: Payout
+	•	Date: 1/1/24
+	•	Currency: USD
+
+This transaction is then broken down into distributions:
+
+	•	Distribution 1:
+	•	Amount: $500
+	•	Status: Completed
+	•	Date: 1/1/24
+
+These distributions are processed in the subledger:
+
+	•	Subledger Entry 1:
+	•	GL Impact Amt: $500
+	•	Acct Rule Applied: Procore Pay Payout
+	•	Acct - DR: Omnibus Cash
+	•	Acct - CR: Customer Deposit
+
+These subledger entries are summarized into journal entries:
+
+	•	Journal Entry 1:
+	•	GL Impact Amt: $500
+	•	DR: $500 to Omnibus Cash
+	•	CR: $500 from Customer Deposit
+
+Finally, these journal entries are posted to the General Ledger:
+
+	•	General Ledger Entry 1:
+	•	GL Impact Amt: $700 (summing multiple transactions)
+	•	DR: $700
+	•	CR: $700
+	•	Balance - DR: $700
+	•	Balance - CR: $700
+
+Summary
+
+In this schema:
+
+	•	Transactions are the raw data.
+	•	Distributions break down transactions for detailed processing.
+	•	Subledger Entries apply accounting rules to these distributions.
+	•	Journal Entries summarize the subledger entries.
+	•	General Ledger Entries provide the final, authoritative record of the company’s financial status.
+
+This system ensures that every transaction is accounted for at multiple levels of detail, from the initial entry to the final summary in the General Ledger, facilitating accurate financial reporting and reconciliation.
