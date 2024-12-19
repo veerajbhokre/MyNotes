@@ -48,3 +48,11 @@
 
 
 ![alt text](image.png)
+
+
+## Hands-on:
+
+- Bedrock:
+  - Providers : AB provdes a fully managed service that makes FMs from leading AI startups and Amazon avalable via API. So we can choose wide range of FMs to find the model which suites our requirements. ex: AI21 Labs, Amazon, Anthropic, Coherd, Meta, Mistral AI, Stability AI.
+  - Model Access: Shows the list of models from providers - need to enable the access to the models we are intrested in.
+  - Playgroud, where we select the model and provide promt to get answer.
